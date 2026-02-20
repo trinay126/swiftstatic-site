@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SwiftStatic – Web Services | Fast. Affordable. Awesome.</title>
+  <meta name="description" content="SwiftStatic builds stunning business websites and digital hubs that help your business shine online. Fast, affordable, and professionally crafted." />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans:  ['Inter', 'sans-serif'],
+            grotesk: ['Space Grotesk', 'sans-serif'],
+          },
+          colors: {
+            navy:   { DEFAULT: '#0b1120', 50: '#f0f4ff', 100: '#dce8ff', 800: '#111827', 900: '#0b1120' },
+            brand:  { DEFAULT: '#6366f1', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' },
+            glow:   '#3b82f6',
+          },
+          animation: {
+            'float':        'float 6s ease-in-out infinite',
+            'fade-in-up':   'fadeInUp 0.7s ease both',
+            'pulse-slow':   'pulse 3s ease-in-out infinite',
+            'shimmer':      'shimmer 2.5s linear infinite',
+          },
+          keyframes: {
+            float:      { '0%,100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-14px)' } },
+            fadeInUp:   { from: { opacity: '0', transform: 'translateY(28px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+            shimmer:    { '0%': { backgroundPosition: '-200% center' }, '100%': { backgroundPosition: '200% center' } },
+          },
+          backgroundImage: {
+            'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+          },
+          boxShadow: {
+            'glow-sm': '0 0 20px rgba(99,102,241,0.3)',
+            'glow':    '0 0 40px rgba(99,102,241,0.4)',
+            'glow-lg': '0 0 80px rgba(99,102,241,0.3)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ── Base ── */
+    body { background: #0b1120; color: #f1f5f9; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+    h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; }
+
+    /* ── Custom scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0b1120; }
+    ::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 4px; }
+
+    /* ── Noise overlay for depth ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    /* ── Gradient text utility ── */
+    .text-gradient {
+      background: linear-gradient(135deg, #818cf8 0%, #6366f1 40%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .text-gradient-gold {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b, #fcd34d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .text-shimmer {
+      background: linear-gradient(90deg, #818cf8 0%, #c4b5fd 25%, #818cf8 50%, #c4b5fd 75%, #818cf8 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+
+    /* ── Glow blob backgrounds ── */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Card glass effect ── */
+    .glass {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(148, 163, 184, 0.08);
+    }
+
+    /* ── Hover lift ── */
+    .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .hover-lift:hover { transform: translateY(-6px); }
+
+    /* ── Nav link underline ── */
+    .nav-link {
+      position: relative;
+      color: #94a3b8;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: color 0.25s;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 2px;
+      background: #6366f1;
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+    .nav-link:hover { color: #f1f5f9; }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ── Form input focus ── */
+    .form-input {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1.5px solid rgba(99,102,241,0.25);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-family: 'Inter', sans-serif;
+      color: #f1f5f9;
+      font-size: 0.9rem;
+      width: 100%;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      outline: none;
+    }
+    .form-input::placeholder { color: #475569; }
+    .form-input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+
+    /* ── Section fade-in on scroll ── */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Badge pill ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    /* ── Pricing card ── */
+    .price-tag {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    /* ── Animated border on featured card ── */
+    .featured-border {
+      position: relative;
+    }
+    .featured-border::before {
+      content: '';
+      position: absolute; inset: -1.5px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #6366f1, #a78bfa, #818cf8);
+      z-index: -1;
+    }
+
+    /* ── Mobile menu ── */
+    #mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    #mobile-menu.open { max-height: 520px; }
+
+    /* ── Mobile global fixes ── */
+    html { scroll-padding-top: 72px; }
+    a, button { -webkit-tap-highlight-color: transparent; }
+    /* Prevent iOS input zoom (requires >= 16px font-size) */
+    @media (max-width: 767px) {
+      .form-input { font-size: 16px !important; padding: 13px 14px; }
+      /* Reduce blob blur radius for perf on mobile */
+      .blob { filter: blur(55px) !important; opacity: 0.7; }
+      /* Tighter section vertical rhythm on phones */
+      .section-py { padding-top: 4rem; padding-bottom: 4rem; }
+    }
+
+    /* ── Logo animated glow ── */
+    @keyframes logoGlow {
+      0%, 100% {
+        filter:
+          drop-shadow(0 0 6px rgba(0, 229, 255, 0.8))
+          drop-shadow(0 0 18px rgba(200, 0, 255, 0.55))
+          drop-shadow(0 0 40px rgba(0, 229, 255, 0.25));
+      }
+      50% {
+        filter:
+          drop-shadow(0 0 14px rgba(0, 229, 255, 1))
+          drop-shadow(0 0 40px rgba(200, 0, 255, 0.9))
+          drop-shadow(0 0 80px rgba(0, 229, 255, 0.5))
+          drop-shadow(0 0 140px rgba(200, 0, 255, 0.25));
+      }
+    }
+    @keyframes logoGlowHover {
+      0%, 100% {
+        filter:
+          drop-shadow(0 0 18px rgba(0, 229, 255, 1))
+          drop-shadow(0 0 50px rgba(200, 0, 255, 1))
+          drop-shadow(0 0 100px rgba(0, 229, 255, 0.7));
+        transform: scale(1.04);
+      }
+      50% {
+        filter:
+          drop-shadow(0 0 28px rgba(0, 229, 255, 1))
+          drop-shadow(0 0 70px rgba(200, 0, 255, 1))
+          drop-shadow(0 0 160px rgba(0, 229, 255, 0.9));
+        transform: scale(1.06);
+      }
+    }
+    .logo-glow {
+      animation: logoGlow 2.8s ease-in-out infinite;
+      border-radius: 14px;
+      transition: animation 0.3s;
+    }
+    .logo-glow:hover {
+      animation: logoGlowHover 1.2s ease-in-out infinite;
+    }
+
+    /* ── Light mode ── */
+    html.light body { background: #f1f5f9; color: #1e293b; }
+    html.light body::before { opacity: 0.015; }
+    html.light ::-webkit-scrollbar-track { background: #f1f5f9; }
+    html.light .glass {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(51, 65, 85, 0.13);
+    }
+    html.light .nav-link { color: #475569; }
+    html.light .nav-link:hover { color: #0f172a; }
+    html.light #navbar {
+      background: rgba(241,245,249,0.97) !important;
+      box-shadow: 0 1px 20px rgba(0,0,0,0.08) !important;
+      border-bottom-color: rgba(51,65,85,0.12) !important;
+    }
+    html.light #mobile-menu { background: rgba(241,245,249,0.97); border-color: rgba(51,65,85,0.12); }
+    html.light .form-input {
+      background: rgba(255,255,255,0.95);
+      border-color: rgba(99,102,241,0.3);
+      color: #1e293b;
+    }
+    html.light .form-input::placeholder { color: #94a3b8; }
+    html.light .form-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+    html.light select option { background: #f1f5f9; color: #1e293b; }
+    html.light footer { border-color: rgba(51,65,85,0.12); }
+    html.light .text-white   { color: #0f172a !important; }
+    html.light .text-slate-200 { color: #1e293b !important; }
+    html.light .text-slate-300 { color: #334155 !important; }
+    html.light .text-slate-400 { color: #475569 !important; }
+    html.light .text-slate-500 { color: #64748b !important; }
+    html.light .text-slate-600 { color: #475569 !important; }
+    html.light .border-white\/5  { border-color: rgba(51,65,85,0.1) !important; }
+    html.light .border-white\/10 { border-color: rgba(51,65,85,0.15) !important; }
+    html.light .bg-\[\#0f172a\]\/95 { background: rgba(241,245,249,0.97) !important; }
+    html.light #theme-toggle, html.light #theme-toggle-mobile {
+      background: rgba(99,102,241,0.1);
+      border-color: rgba(99,102,241,0.3);
+    }
+  </style>
+</head>
+<body>
+
+<!-- =====================================================================
+     NAVBAR
+===================================================================== -->
+<header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="flex items-center justify-between h-16 lg:h-18">
+
+      <!-- Logo -->
+      <a href="#home" class="flex items-center">
+        <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-11 w-auto logo-glow" />
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="#services" class="nav-link">Services</a>
+        <a href="#plans" class="nav-link">Plans</a>
+        <a href="#portfolio" class="nav-link">Work</a>
+        <a href="#booking" class="nav-link">Free Call</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
+
+      <!-- CTA -->
+      <div class="hidden md:flex items-center gap-3">
+        <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark mode"
+           class="w-9 h-9 rounded-full glass border border-white/10 hover:border-indigo-500/40 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 hover:-translate-y-0.5">
+          <span id="theme-icon">🌙</span>
+        </button>
+        <a href="#booking" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-5 py-2 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/40">
+          Book Free Call
+        </a>
+      </div>
+
+      <!-- Hamburger -->
+      <button id="menu-toggle" class="md:hidden text-slate-300 hover:text-white p-2" aria-label="Menu">
+        <div class="w-5 h-0.5 bg-current mb-1 transition-all duration-300" id="bar1"></div>
+        <div class="w-5 h-0.5 bg-current mb-1 transition-all duration-300" id="bar2"></div>
+        <div class="w-4 h-0.5 bg-current transition-all duration-300" id="bar3"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="md:hidden bg-[#0f172a]/95 backdrop-blur-xl border-t border-white/5">
+    <div class="px-5 py-4 flex flex-col gap-4">
+      <a href="#services"  class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Services</a>
+      <a href="#plans"     class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Plans</a>
+      <a href="#portfolio" class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Work</a>
+      <a href="#booking"   class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Free Call</a>
+      <a href="#contact"   class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Contact</a>
+      <div class="flex flex-col gap-2 pt-2 border-t border-white/10">
+        <button id="theme-toggle-mobile" onclick="toggleTheme(); closeMobileMenu();" class="flex items-center justify-center gap-2 glass text-slate-300 font-semibold py-2.5 rounded-xl text-sm border border-white/10"><span id="theme-icon-mobile">🌙</span> Toggle Theme</button>
+        <a href="#booking" class="flex items-center justify-center bg-indigo-600 text-white font-semibold py-2.5 rounded-xl text-sm" onclick="closeMobileMenu()">🚀 Book Free Call</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<!-- =====================================================================
+     HERO
+===================================================================== -->
+<section id="home" class="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
+
+  <!-- Blobs -->
+  <div class="blob w-[600px] h-[600px] bg-indigo-600/20 top-[-200px] left-[-200px]"></div>
+  <div class="blob w-[500px] h-[500px] bg-purple-600/15 bottom-[-100px] right-[-150px]"></div>
+  <div class="blob w-[300px] h-[300px] bg-blue-500/10 top-[40%] left-[50%]"></div>
+
+  <!-- Grid pattern -->
+  <div class="absolute inset-0 z-0 opacity-[0.04]"
+       style="background-image: linear-gradient(#6366f1 1px,transparent 1px),linear-gradient(to right,#6366f1 1px,transparent 1px); background-size: 60px 60px;"></div>
+
+  <div class="relative z-10 max-w-5xl mx-auto px-5 lg:px-8 text-center py-16 sm:py-24">
+
+    <!-- Badge -->
+    <div class="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold tracking-widest uppercase px-4 py-2 rounded-full mb-7 animate-fade-in-up">
+      <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse-slow"></span>
+      Available for New Projects
+    </div>
+
+    <!-- Headline -->
+    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black font-grotesk leading-[1.08] sm:leading-[1.05] tracking-tight mb-5 sm:mb-6 animate-fade-in-up" style="animation-delay:0.1s">
+      Crafting Your
+      <span class="block text-shimmer">Dream Websites</span>
+      <span class="block text-slate-300 mt-1">Fast. Affordable.<span class="text-gradient"> Awesome.</span></span>
+    </h1>
+
+    <!-- Sub -->
+    <p class="text-slate-400 text-base sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-9 animate-fade-in-up" style="animation-delay:0.2s">
+      We build beautiful, fast, and affordable websites that help your business grow online. Let’s turn your vision into a live, stunning digital presence. 🚀
+    </p>
+
+    <!-- CTAs -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 animate-fade-in-up" style="animation-delay:0.3s">
+      <a href="#booking"
+         class="group flex items-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-base px-8 py-4 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(99,102,241,0.45)] w-full sm:w-auto justify-center">
+        🤝 Book a Free Call
+        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+      </a>
+
+    </div>
+
+    <!-- Stats row -->
+    <div class="grid grid-cols-2 gap-6 max-w-sm mx-auto animate-fade-in-up" style="animation-delay:0.4s">
+      <div class="text-center">
+        <div class="text-3xl font-black font-grotesk text-gradient">3–5</div>
+        <div class="text-slate-500 text-xs mt-1 font-medium">Days Delivery</div>
+      </div>
+      <div class="text-center border-l border-white/5">
+        <div class="text-3xl font-black font-grotesk text-gradient">100%</div>
+        <div class="text-slate-500 text-xs mt-1 font-medium">Satisfaction</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce opacity-40">
+    <span class="text-slate-500 text-[10px] tracking-widest uppercase">Scroll</span>
+    <svg class="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+  </div>
+</section>
+
+
+<!-- =====================================================================
+     WHAT WE DO — SECTION DIVIDER
+===================================================================== -->
+<div class="relative py-6">
+  <div class="flex items-center gap-4 max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent"></div>
+    <div class="badge bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
+      <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span>
+      WHAT WE DO
+    </div>
+    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent"></div>
+  </div>
+</div>
+
+
+<!-- =====================================================================
+     SERVICES
+===================================================================== -->
+<section id="services" class="relative py-16 md:py-24 overflow-hidden">
+  <div class="blob w-[400px] h-[400px] bg-indigo-600/12 top-0 right-0"></div>
+
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+
+    <!-- Header -->
+    <div class="text-center mb-16 reveal">
+      <span class="badge bg-indigo-500/10 border border-indigo-500/25 text-indigo-400 mb-5">Our Services</span>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black font-grotesk text-white mb-4">Everything your business needs<br class="hidden sm:block"/><span class="text-gradient"> to shine online</span></h2>
+      <p class="text-slate-400 text-base sm:text-lg max-w-xl mx-auto">Everything you need to make your business stand out online — no bloat, just results.</p>
+    </div>
+
+    <!-- Cards grid -->
+    <div class="grid md:grid-cols-3 gap-6">
+
+      <!-- Card 1 -->
+      <div class="reveal glass rounded-2xl p-6 md:p-8 hover-lift hover:border-indigo-500/30 hover:shadow-glow-sm cursor-default group" style="transition-delay:0s">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500/30 to-blue-500/20 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">🌐</div>
+        <h3 class="text-xl font-bold font-grotesk text-white mb-3">Custom Business Websites</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-6">Stunning, responsive sites tailored to your brand. From landing pages to full multi-page sites that convert visitors into customers.</p>
+        <ul class="space-y-2.5">
+          <li class="flex items-center gap-2.5 text-sm text-slate-300"><span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">✓</span>Mobile-first design</li>
+          <li class="flex items-center gap-2.5 text-sm text-slate-300"><span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">✓</span>Fast load times</li>
+          <li class="flex items-center gap-2.5 text-sm text-slate-300"><span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">✓</span>SEO optimized</li>
+        </ul>
+      </div>
+
+      <!-- Card 2 — Featured -->
+      <div class="reveal featured-border hover-lift cursor-default group" style="transition-delay:0.1s">
+        <div class="relative glass rounded-2xl p-6 md:p-8 h-full hover:shadow-glow">
+          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold px-4 py-1.5 rounded-full tracking-wide whitespace-nowrap">⭐ Most Popular</div>
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500/30 to-red-500/20 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">�</div>
+          <h3 class="text-xl font-bold font-grotesk text-white mb-3">Static Website for Your Business</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-6">A fully branded, professional website to replace that basic Linktree — built to impress customers and drive real business results.</p>
+          <ul class="space-y-2.5">
+            <li class="flex items-center gap-2.5 text-sm text-slate-300"><span class="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">✓</span>Email / message integration</li>
+            <li class="flex items-center gap-2.5 text-sm text-slate-300"><span class="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">✓</span>Menu &amp; ambience gallery</li>
+            <li class="flex items-center gap-2.5 text-sm text-slate-300"><span class="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">✓</span>Zomato &amp; Swiggy order redirect</li>
+            <li class="flex items-center gap-2.5 text-sm text-slate-300"><span class="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">✓</span>Table booking via email</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="reveal glass rounded-2xl p-6 md:p-8 hover-lift hover:border-green-500/30 hover:shadow-lg hover:shadow-green-500/10 cursor-default group" style="transition-delay:0.2s">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500/30 to-emerald-500/20 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">💬</div>
+        <h3 class="text-xl font-bold font-grotesk text-white mb-3">Free Consultation</h3>
+        <p class="text-slate-400 text-sm leading-relaxed mb-6">Not sure where to start? Let's chat for 15 minutes and map out your digital vision. Zero pressure, maximum value.</p>
+        <ul class="space-y-2.5">
+          <li class="flex items-center gap-2.5 text-sm text-slate-300"><span class="w-5 h-5 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-xs">✓</span>Strategy session</li>
+          <li class="flex items-center gap-2.5 text-sm text-slate-300"><span class="w-5 h-5 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-xs">✓</span>Tech stack advice</li>
+          <li class="flex items-center gap-2.5 text-sm text-slate-300"><span class="w-5 h-5 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-xs">✓</span>Pricing clarity</li>
+        </ul>
+        <a href="#booking" class="mt-6 flex items-center justify-center gap-2 bg-green-500/15 hover:bg-green-500/25 text-green-400 font-semibold text-sm py-2.5 rounded-xl transition-colors duration-200 border border-green-500/20">
+          📅 Book Now — It's Free!
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- =====================================================================
+     OUR PLANS — DIVIDER
+===================================================================== -->
+<div class="relative py-6">
+  <div class="flex items-center gap-4 max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"></div>
+    <div class="badge bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
+      <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></span>
+      OUR PLANS
+    </div>
+    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"></div>
+  </div>
+</div>
+
+
+<!-- =====================================================================
+     PRICING / PLANS
+===================================================================== -->
+<section id="plans" class="relative py-16 md:py-24 overflow-hidden">
+  <div class="blob w-[500px] h-[500px] bg-cyan-600/10 top-0 right-[-150px]"></div>
+  <div class="blob w-[400px] h-[400px] bg-purple-600/10 bottom-0 left-[-100px]"></div>
+
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+
+    <!-- Header -->
+    <div class="text-center mb-16 reveal">
+      <span class="badge bg-cyan-500/10 border border-cyan-500/25 text-cyan-400 mb-5">Transparent Pricing</span>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black font-grotesk text-white mb-4">Simple plans,<br/><span class="text-gradient">no surprises.</span></h2>
+      <p class="text-slate-400 text-base sm:text-lg max-w-xl mx-auto">Pick the plan that fits your business — upgrade any time.</p>
+    </div>
+
+    <!-- 3 Plan Cards -->
+    <div class="grid md:grid-cols-3 gap-6 mb-8">
+
+      <!-- Basic -->
+      <div class="reveal glass rounded-2xl p-6 md:p-8 hover-lift border border-white/5 hover:border-cyan-500/25 flex flex-col" style="transition-delay:0s">
+        <div class="mb-6">
+          <div class="text-xs font-bold tracking-widest text-cyan-400 uppercase mb-3">Basic</div>
+          <div class="flex items-end gap-1 mb-1">
+            <span class="text-slate-400 text-lg font-semibold">₹</span>
+            <span class="text-5xl font-black font-grotesk text-white">5,000</span>
+          </div>
+          <p class="text-slate-400 text-sm leading-relaxed mt-3">Perfect for getting found. A clean, professional web presence with everything you need to start.</p>
+        </div>
+        <ul class="space-y-3 flex-1 mb-8">
+          <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-cyan-400 mt-0.5 flex-shrink-0">✶</span>Digital menu with item descriptions</li>
+          <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-cyan-400 mt-0.5 flex-shrink-0">✶</span>Contact page with Google Maps embed</li>
+          <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-cyan-400 mt-0.5 flex-shrink-0">✶</span>Fast CDN hosting included</li>
+          <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-cyan-400 mt-0.5 flex-shrink-0">✶</span>Mobile-responsive design</li>
+          <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-cyan-400 mt-0.5 flex-shrink-0">✶</span>1 round of revisions</li>
+        </ul>
+        <button onclick="selectPlan('Basic — ₹5,000')" class="w-full flex items-center justify-center gap-2 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 font-bold py-3.5 rounded-xl border border-cyan-500/25 transition-all duration-300 hover:-translate-y-0.5 text-sm">
+          Get Started →
+        </button>
+      </div>
+
+      <!-- Growth — featured -->
+      <div class="reveal relative flex flex-col mt-6 md:mt-0" style="transition-delay:0.1s">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold px-5 py-1.5 rounded-full tracking-wide whitespace-nowrap z-10">⭐ Most Popular</div>
+        <div class="glass rounded-2xl p-6 md:p-8 hover-lift border border-indigo-500/40 hover:shadow-glow flex flex-col flex-1" style="background:rgba(99,102,241,0.06)">
+          <div class="mb-6">
+            <div class="text-xs font-bold tracking-widest text-indigo-400 uppercase mb-3">Growth</div>
+            <div class="flex items-end gap-1 mb-1">
+              <span class="text-slate-400 text-lg font-semibold">₹</span>
+              <span class="text-5xl font-black font-grotesk text-white">8,000</span>
+            </div>
+            <p class="text-slate-400 text-sm leading-relaxed mt-3">Everything in Starter, plus the tools to grow your audience and drive more footfall.</p>
+          </div>
+          <ul class="space-y-3 flex-1 mb-8">
+            <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-indigo-400 mt-0.5 flex-shrink-0">✶</span>Everything in Basic</li>
+            <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-indigo-400 mt-0.5 flex-shrink-0">✶</span>Ambiance photo gallery</li>
+            <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-indigo-400 mt-0.5 flex-shrink-0">✶</span>Table booking via email</li>
+            <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-indigo-400 mt-0.5 flex-shrink-0">✶</span>Customer testimonials section</li>
+            <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-indigo-400 mt-0.5 flex-shrink-0">✶</span>2 rounds of revisions</li>
+          </ul>
+          <button onclick="selectPlan('Growth — ₹8,000')" class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(99,102,241,0.45)] text-sm">
+            Get Started →
+          </button>
+        </div>
+      </div>
+
+      <!-- Premium -->
+      <div class="reveal glass rounded-2xl p-6 md:p-8 hover-lift border border-white/5 hover:border-purple-500/25 flex flex-col" style="transition-delay:0.2s">
+        <div class="mb-6">
+          <div class="text-xs font-bold tracking-widest text-purple-400 uppercase mb-3">Premium</div>
+          <div class="flex items-end gap-1 mb-1">
+            <span class="text-slate-400 text-lg font-semibold">₹</span>
+            <span class="text-5xl font-black font-grotesk text-white">15,000</span>
+          </div>
+          <p class="text-slate-400 text-sm leading-relaxed mt-3">The complete digital identity. Custom domain, branded email, and full delivery app integration.</p>
+        </div>
+        <ul class="space-y-3 flex-1 mb-8">
+          <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-purple-400 mt-0.5 flex-shrink-0">✶</span>Everything in Growth</li>
+          <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-purple-400 mt-0.5 flex-shrink-0">✶</span>Custom domain setup (yourname.com)</li>
+          <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-purple-400 mt-0.5 flex-shrink-0">✶</span>Branded email address</li>
+          <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-purple-400 mt-0.5 flex-shrink-0">✶</span>Swiggy &amp; Zomato routing buttons</li>
+          <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-purple-400 mt-0.5 flex-shrink-0">✶</span>Advanced table booking flow</li>
+          <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-purple-400 mt-0.5 flex-shrink-0">✶</span>SEO metadata &amp; social previews</li>
+          <li class="flex items-start gap-2.5 text-sm text-slate-300"><span class="text-purple-400 mt-0.5 flex-shrink-0">✶</span>Unlimited revisions during build</li>
+        </ul>
+        <button onclick="selectPlan('Premium — ₹15,000')" class="w-full flex items-center justify-center gap-2 bg-purple-600/20 hover:bg-purple-600/35 text-purple-300 font-bold py-3.5 rounded-xl border border-purple-500/30 transition-all duration-300 hover:-translate-y-0.5 text-sm">
+          Get Started →
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Add-On Card -->
+    <div class="reveal glass rounded-2xl p-8 border border-orange-500/20 hover-lift hover:border-orange-500/40 transition-all duration-300" style="transition-delay:0.25s">
+      <div class="flex flex-col md:flex-row md:items-center gap-6">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500/25 to-yellow-500/15 flex items-center justify-center text-3xl flex-shrink-0">⚙️</div>
+        <div class="flex-1">
+          <div class="flex flex-wrap items-center gap-3 mb-2">
+            <h3 class="text-xl font-bold font-grotesk text-white">Add-On Service</h3>
+            <span class="badge bg-orange-500/15 border border-orange-500/30 text-orange-300 text-[10px]">ADD-ON</span>
+            <div class="flex items-end gap-1">
+              <span class="text-slate-400 text-sm font-semibold">₹</span>
+              <span class="text-2xl font-black font-grotesk text-orange-300">1,500</span>
+              <span class="text-slate-500 text-sm">/&nbsp;month</span>
+            </div>
+          </div>
+          <p class="text-slate-300 font-semibold mb-1">The Caretaker</p>
+          <p class="text-slate-400 text-sm leading-relaxed max-w-2xl">Never worry about updating your menu again. We handle all menu changes, new item additions, price updates, and photo replacements on an ongoing basis — so you can focus on running your restaurant.</p>
+        </div>
+        <button onclick="selectPlan('Add-On: The Caretaker — ₹1,500/month')" class="w-full md:w-auto flex-shrink-0 flex items-center justify-center gap-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 font-bold py-3 px-7 rounded-xl border border-orange-500/30 transition-all duration-300 hover:-translate-y-0.5 text-sm">
+          Get Started →
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- =====================================================================
+     OUR WORK — DIVIDER
+===================================================================== -->
+<div class="relative py-6">
+  <div class="flex items-center gap-4 max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
+    <div class="badge bg-purple-500/10 border border-purple-500/30 text-purple-300">
+      <span class="w-1.5 h-1.5 bg-purple-400 rounded-full"></span>
+      OUR WORK
+    </div>
+    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
+  </div>
+</div>
+
+
+<!-- =====================================================================
+     PORTFOLIO
+===================================================================== -->
+<section id="portfolio" class="relative py-16 md:py-24 overflow-hidden">
+  <div class="blob w-[450px] h-[450px] bg-purple-600/12 bottom-0 left-[-100px]"></div>
+
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+
+    <div class="text-center reveal">
+      <span class="badge bg-purple-500/10 border border-purple-500/25 text-purple-400 mb-5">Our Work</span>
+      <h2 class="text-4xl lg:text-5xl font-black font-grotesk text-white mb-6">Something exciting<br/><span class="text-gradient">is coming.</span></h2>
+      <p class="text-slate-400 text-lg max-w-xl mx-auto mb-10">We're putting the finishing touches on our portfolio. Be the first to experience what we've built — and even better, be part of it.</p>
+      <div class="reveal glass border border-indigo-500/25 rounded-2xl px-6 sm:px-8 py-5 flex flex-col sm:flex-row items-center gap-4 max-w-2xl mx-auto text-center sm:text-left">
+        <span class="text-4xl flex-shrink-0">✨</span>
+        <div class="flex-1">
+          <div class="text-white font-bold font-grotesk text-lg">Be first to experience our work.</div>
+          <div class="text-slate-400 text-sm mt-1">Book a free call and see live demos built just for you.</div>
+        </div>
+        <a href="#booking" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition-all duration-300 hover:-translate-y-0.5 whitespace-nowrap">Book Now</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =====================================================================
+     DIGITAL HUB INSIGHT
+===================================================================== -->
+<section class="relative py-14 md:py-20 overflow-hidden">
+  <div class="blob w-[350px] h-[350px] bg-indigo-500/8 top-0 right-[10%]"></div>
+  <div class="max-w-4xl mx-auto px-5 lg:px-8 relative z-10">
+    <div class="text-center mb-8 sm:mb-10 reveal">
+      <span class="badge bg-indigo-500/10 border border-indigo-500/25 text-indigo-400 mb-5">Why a Digital Hub? 💡</span>
+      <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black font-grotesk text-white">Your business deserves more<br/><span class="text-gradient">than a Linktree.</span></h2>
+    </div>
+    <div class="reveal glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 border border-indigo-500/15 hover-lift">
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+        Many businesses think their Instagram page <em>is</em> their website. But when you click the link in their bio, it just goes to a basic Linktree or a messy Google Drive folder with photos of their menu.
+      </p>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed mt-4 sm:mt-5">
+        We aren’t selling a massive corporate website — we are selling a premium, branded <strong class="text-white">“Digital Hub”</strong> that replaces that ugly Linktree and actually <span class="text-gradient">drives results.</span>
+      </p>
+      <div class="mt-8 flex flex-col sm:flex-row gap-4 items-start">
+        <div class="flex-1 glass rounded-2xl p-5 border border-red-500/15">
+          <div class="text-red-400 font-bold font-grotesk mb-2">🚫 What you have now</div>
+          <ul class="space-y-1.5 text-sm text-slate-400">
+            <li>• Basic Linktree in bio</li>
+            <li>• Messy Google Drive folder</li>
+            <li>• No brand identity online</li>
+            <li>• Zero booking &amp; inquiry flow</li>
+          </ul>
+        </div>
+        <div class="flex-1 glass rounded-2xl p-5 border border-indigo-500/25">
+          <div class="text-indigo-400 font-bold font-grotesk mb-2">✨ What you get with us</div>
+          <ul class="space-y-1.5 text-sm text-slate-300">
+            <li>• Branded Digital Hub</li>
+            <li>• Menu &amp; ambience gallery</li>
+            <li>• Zomato &amp; Swiggy redirects</li>
+            <li>• Booking &amp; inquiry via email</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== – DIVIDER
+===================================================================== -->
+<div class="relative py-6">
+  <div class="flex items-center gap-4 max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-green-500/30 to-transparent"></div>
+    <div class="badge bg-green-500/10 border border-green-500/30 text-green-300">
+      <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+      LET'S TALK
+    </div>
+    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-green-500/30 to-transparent"></div>
+  </div>
+</div>
+
+
+<!-- =====================================================================
+     BOOKING FORM
+===================================================================== -->
+<section id="booking" class="relative py-16 md:py-24 overflow-hidden">
+  <div class="blob w-[500px] h-[500px] bg-indigo-600/12 top-[-100px] right-[-100px]"></div>
+  <div class="blob w-[400px] h-[400px] bg-green-600/8 bottom-[-100px] left-[-50px]"></div>
+
+  <div class="max-w-2xl mx-auto px-5 lg:px-8 relative z-10">
+
+    <div class="text-center mb-12 reveal">
+      <span class="badge bg-green-500/10 border border-green-500/25 text-green-400 mb-5">Book a Free Call</span>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black font-grotesk text-white mb-4">15 minutes. No strings<br/><span class="text-gradient">attached.</span></h2>
+      <p class="text-slate-400 text-lg">We'll understand your vision and show you how we can help. 🤝</p>
+    </div>
+
+    <div class="reveal glass rounded-3xl p-8 lg:p-10 border border-indigo-500/20">
+      <form id="booking-form" onsubmit="handleBooking(event)" novalidate>
+
+        <!-- Name -->
+        <div class="mb-5">
+          <label class="block text-sm font-semibold text-slate-300 mb-2">Your Name ✨</label>
+          <input type="text" id="b-name" class="form-input" placeholder="e.g. Rahul Sharma" required />
+        </div>
+
+        <!-- Email -->
+        <div class="mb-5">
+          <label class="block text-sm font-semibold text-slate-300 mb-2">Email Address 📧</label>
+          <input type="email" id="b-email" class="form-input" placeholder="you@example.com" required />
+        </div>
+
+        <!-- Service -->
+        <div class="mb-5">
+          <label class="block text-sm font-semibold text-slate-300 mb-2">Service Interested In 🎯</label>
+          <select id="b-service" class="form-input appearance-none cursor-pointer" required>
+            <option value="" disabled selected>Select a service...</option>
+            <option>Custom Business Website</option>
+            <option>Static Website for Your Business</option>
+            <option>Restaurant / Cafe Website</option>
+            <option>Free Consultation Only</option>
+            <option>Something Else</option>
+          </select>
+        </div>
+
+        <!-- Date + Time row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-2">Preferred Date 📅</label>
+            <input type="date" id="b-date" class="form-input cursor-pointer" required />
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-2">Time Slot ⏰</label>
+            <select id="b-time" class="form-input appearance-none cursor-pointer" required>
+              <option value="" disabled selected>Choose time</option>
+              <option>10:00 AM – 10:15 AM</option>
+              <option>11:00 AM – 11:15 AM</option>
+              <option>12:00 PM – 12:15 PM</option>
+              <option>2:00 PM – 2:15 PM</option>
+              <option>4:00 PM – 4:15 PM</option>
+              <option>6:00 PM – 6:15 PM</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Message -->
+        <div class="mb-7">
+          <label class="block text-sm font-semibold text-slate-300 mb-2">Tell us about your project (optional) 💭</label>
+          <textarea id="b-msg" class="form-input resize-none" rows="3" placeholder="Brief description of what you need..."></textarea>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+          class="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-base py-4 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(99,102,241,0.45)]">
+          🚀 Book My Free Call!
+        </button>
+        <p class="text-center text-slate-500 text-xs mt-4">Completely free · No obligations · We respond within 24 hours</p>
+      </form>
+
+      <!-- Success state (hidden by default) -->
+      <div id="booking-success" class="hidden text-center py-4">
+        <div class="text-6xl mb-4 animate-bounce">🎉</div>
+        <h3 class="text-xl font-bold font-grotesk text-white mb-2">We'll be in touch!</h3>
+        <p class="text-slate-400 text-sm">Booking confirmed! We'll email you within 24 hours to confirm the call. See you soon! 😊</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- =====================================================================
+     SAY HELLO – DIVIDER
+===================================================================== -->
+<div class="relative py-6">
+  <div class="flex items-center gap-4 max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
+    <div class="badge bg-blue-500/10 border border-blue-500/30 text-blue-300">
+      <span class="w-1.5 h-1.5 bg-blue-400 rounded-full"></span>
+      SAY HELLO
+    </div>
+    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
+  </div>
+</div>
+
+
+<!-- =====================================================================
+     CONTACT
+===================================================================== -->
+<section id="contact" class="relative py-16 md:py-24 overflow-hidden">
+  <div class="blob w-[400px] h-[400px] bg-blue-600/12 top-0 left-[10%]"></div>
+
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+
+    <div class="text-center mb-16 reveal">
+      <span class="badge bg-blue-500/10 border border-blue-500/25 text-blue-400 mb-5">Get In Touch</span>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black font-grotesk text-white mb-4">Have a project in mind?<br class="hidden sm:block"/><span class="text-gradient"> Drop us a message.</span> 💬</h2>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-8">
+
+      <!-- LEFT: Contact info -->
+      <div class="space-y-6 reveal">
+
+        <!-- Info card -->
+        <div class="glass rounded-2xl p-7 border border-white/5">
+          <h3 class="text-lg font-bold font-grotesk text-white mb-5">Contact Info</h3>
+          <div class="space-y-4">
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-xl bg-indigo-500/15 flex items-center justify-center text-xl flex-shrink-0">📧</div>
+              <div>
+                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Email</div>
+                <a href="mailto:SWIFTSTATICC@GMAIL.COM" class="text-slate-200 hover:text-indigo-400 transition-colors font-medium text-sm break-all">SWIFTSTATICC@GMAIL.COM</a>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-xl bg-green-500/15 flex items-center justify-center text-xl flex-shrink-0">🕐</div>
+              <div>
+                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Response Time</div>
+                <span class="text-slate-200 font-medium text-sm">Within 24 hours</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="glass rounded-2xl p-7 border border-white/5">
+          <h3 class="text-lg font-bold font-grotesk text-white mb-5">Quick Actions</h3>
+          <div class="flex flex-col gap-3">
+            <a href="mailto:SWIFTSTATICC@GMAIL.COM?subject=I need a website!"
+               class="flex items-center gap-3 bg-indigo-600/20 hover:bg-indigo-600/35 text-indigo-300 font-semibold py-3 px-5 rounded-xl transition-all duration-200 hover:-translate-y-0.5 border border-indigo-500/25">
+              <span class="text-lg">📩</span> Email Us Directly
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Contact form -->
+      <div class="reveal" style="transition-delay:0.1s">
+        <div class="glass rounded-2xl p-8 border border-white/5">
+          <h3 class="text-lg font-bold font-grotesk text-white mb-6">Send a Message</h3>
+          <form id="contact-form" onsubmit="handleContact(event)" novalidate>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Name</label>
+                <input type="text" id="c-name" class="form-input" placeholder="Your name" required />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Email</label>
+                <input type="email" id="c-email" class="form-input" placeholder="you@email.com" required />
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Interested Plan</label>
+              <select id="c-plan" class="form-input appearance-none cursor-pointer">
+                <option value="" selected>Select a plan (optional)</option>
+                <option>Basic — ₹5,000</option>
+                <option>Growth — ₹8,000</option>
+                <option>Premium — ₹15,000</option>
+                <option>Add-On: The Caretaker — ₹1,500/month</option>
+                <option>Not sure yet</option>
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Subject</label>
+              <input type="text" id="c-subject" class="form-input" placeholder="What's this about?" required />
+            </div>
+
+            <div class="mb-6">
+              <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Message</label>
+              <textarea id="c-message" class="form-input resize-none" rows="4" placeholder="Tell us about your project..." required></textarea>
+            </div>
+
+            <div class="flex gap-3">
+              <button type="submit"
+                class="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(99,102,241,0.4)]">
+                🚀 Send Message
+              </button>
+            </div>
+
+          </form>
+
+          <!-- Success state -->
+          <div id="contact-success" class="hidden py-4 text-center">
+            <div class="text-5xl mb-3">✅</div>
+            <h4 class="font-bold font-grotesk text-white mb-1">Message Sent!</h4>
+            <p class="text-slate-400 text-sm">We'll get back to you within 24 hours. 😊</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- =====================================================================
+     FOOTER
+===================================================================== -->
+<footer class="relative border-t border-white/5 py-14 overflow-hidden">
+  <div class="blob w-[300px] h-[300px] bg-indigo-600/8 bottom-0 left-[10%]"></div>
+
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+
+    <div class="flex flex-col lg:flex-row items-center justify-between gap-8 mb-10">
+
+      <!-- Brand -->
+      <div class="text-center lg:text-left">
+        <div class="flex items-center justify-center lg:justify-start mb-3">
+          <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-16 md:h-[72px] w-auto logo-glow" />
+        </div>
+        <p class="text-slate-500 text-sm max-w-xs">Building your dream website, fast and affordable. 🚀</p>
+        <p class="text-slate-600 text-xs mt-1">© 2026 SwiftStatic Web Services. All rights reserved.</p>
+      </div>
+
+      <!-- Nav links -->
+      <nav class="flex flex-wrap gap-x-8 gap-y-3 justify-center">
+        <a href="#services"  class="text-slate-400 hover:text-white text-sm font-medium transition-colors">Services</a>
+        <a href="#plans"     class="text-slate-400 hover:text-white text-sm font-medium transition-colors">Plans</a>
+        <a href="#portfolio" class="text-slate-400 hover:text-white text-sm font-medium transition-colors">Portfolio</a>
+        <a href="#booking"   class="text-slate-400 hover:text-white text-sm font-medium transition-colors">Book a Call</a>
+        <a href="#contact"   class="text-slate-400 hover:text-white text-sm font-medium transition-colors">Contact</a>
+      </nav>
+
+      <!-- CTA -->
+      <div class="flex flex-col sm:flex-row gap-3 items-center">
+        <a href="mailto:SWIFTSTATICC@GMAIL.COM"
+           class="flex items-center gap-2 glass text-slate-300 hover:text-white text-sm font-medium px-5 py-2.5 rounded-full border border-white/10 hover:border-white/20 transition-all hover:-translate-y-0.5">
+          📧 SWIFTSTATICC@GMAIL.COM
+        </a>
+      </div>
+    </div>
+
+    <div class="border-t border-white/5 pt-6 text-center">
+      <p class="text-slate-600 text-xs">© 2026 SwiftStatic Web Services · All rights reserved.</p>
+    </div>
+
+  </div>
+</footer>
+
+
+<!-- =====================================================================
+     SCROLL TO TOP BUTTON
+===================================================================== -->
+<button id="scroll-top"
+  class="fixed bottom-6 right-6 w-11 h-11 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full shadow-glow flex items-center justify-center z-50 opacity-0 translate-y-4 pointer-events-none transition-all duration-300"
+  onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="Back to top">
+  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+</button>
+
+
+<!-- =====================================================================
+     JAVASCRIPT
+===================================================================== -->
+<script>
+  /* ── Navbar glass on scroll ── */
+  const navbar  = document.getElementById('navbar');
+  const scrollTopBtn = document.getElementById('scroll-top');
+
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY > 20;
+    navbar.style.background = scrolled
+      ? 'rgba(11,17,32,0.92)'
+      : 'transparent';
+    navbar.style.boxShadow = scrolled
+      ? '0 4px 40px rgba(0,0,0,0.5), 0 1px 0 rgba(99,102,241,0.15)'
+      : 'none';
+    navbar.style.borderBottomColor = scrolled
+      ? 'rgba(255,255,255,0.07)'
+      : 'transparent';
+
+    // Scroll-to-top button
+    if (window.scrollY > 500) {
+      scrollTopBtn.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+      scrollTopBtn.classList.add('opacity-100', 'translate-y-0');
+    } else {
+      scrollTopBtn.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      scrollTopBtn.classList.remove('opacity-100', 'translate-y-0');
+    }
+  });
+
+  /* ── Mobile menu toggle ── */
+  const menuToggle  = document.getElementById('menu-toggle');
+  const mobileMenu  = document.getElementById('mobile-menu');
+  const bar1 = document.getElementById('bar1');
+  const bar2 = document.getElementById('bar2');
+  const bar3 = document.getElementById('bar3');
+  let menuOpen = false;
+
+  menuToggle.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileMenu.classList.toggle('open', menuOpen);
+    bar1.style.transform = menuOpen ? 'rotate(45deg) translate(5px, 5px)' : '';
+    bar2.style.opacity   = menuOpen ? '0' : '1';
+    bar3.style.transform = menuOpen ? 'rotate(-45deg) translate(4px, -4px)' : '';
+    bar3.style.width     = menuOpen ? '20px' : '';
+  });
+
+  function closeMobileMenu() {
+    menuOpen = false;
+    mobileMenu.classList.remove('open');
+    bar1.style.transform = '';
+    bar2.style.opacity   = '1';
+    bar3.style.transform = '';
+  }
+
+  /* ── IntersectionObserver – reveal on scroll ── */
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  /* ── Set min date for booking calendar ── */
+  const dateInput = document.getElementById('b-date');
+  if (dateInput) {
+    dateInput.min = new Date().toISOString().split('T')[0];
+  }
+
+  /* ── Booking form submit ── */
+  function handleBooking(e) {
+    e.preventDefault();
+    const name    = document.getElementById('b-name').value.trim();
+    const email   = document.getElementById('b-email').value.trim();
+    const service = document.getElementById('b-service').value;
+    const date    = document.getElementById('b-date').value;
+    const time    = document.getElementById('b-time').value;
+    const msg     = document.getElementById('b-msg').value.trim();
+
+    if (!name || !email || !service || !date || !time) {
+      showToast('⚠️ Please fill in all required fields.', 'error');
+      return;
+    }
+
+    const subject = encodeURIComponent(`Free Call Booking: ${name}`);
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\nService: ${service}\nDate: ${date}\nTime: ${time}\n\nMessage:\n${msg || '(none)'}`
+    );
+    window.location.href = `mailto:swiftstaticc@gmail.com?subject=${subject}&body=${body}`;
+
+    const form    = document.getElementById('booking-form');
+    const success = document.getElementById('booking-success');
+    form.style.opacity = '0';
+    form.style.transition = 'opacity 0.3s';
+    setTimeout(() => {
+      form.classList.add('hidden');
+      success.classList.remove('hidden');
+    }, 300);
+
+    showToast('🎉 Email client opened! We\'ll confirm your call soon.', 'success');
+  }
+
+  /* ── Contact form submit ── */
+  function handleContact(e) {
+    e.preventDefault();
+    const name    = document.getElementById('c-name').value.trim();
+    const email   = document.getElementById('c-email').value.trim();
+    const plan    = document.getElementById('c-plan').value;
+    const subject = document.getElementById('c-subject').value.trim();
+    const message = document.getElementById('c-message').value.trim();
+
+    if (!name || !email || !subject || !message) {
+      showToast('⚠️ Please fill in all fields.', 'error');
+      return;
+    }
+
+    const planLine = plan ? `Interested Plan: ${plan}\n` : '';
+    const mailSubject = encodeURIComponent(`[SwiftStatic Contact] ${subject}`);
+    const mailBody = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\n${planLine}Subject: ${subject}\n\nMessage:\n${message}`
+    );
+    window.location.href = `mailto:swiftstaticc@gmail.com?subject=${mailSubject}&body=${mailBody}`;
+
+    const form    = document.getElementById('contact-form');
+    const success = document.getElementById('contact-success');
+    form.style.opacity = '0';
+    form.style.transition = 'opacity 0.3s';
+    setTimeout(() => {
+      form.classList.add('hidden');
+      success.classList.remove('hidden');
+    }, 300);
+
+    showToast('✅ Email client opened! We\'ll reply within 24 hours.', 'success');
+  }
+
+  /* ── Select plan from pricing cards ── */
+  function selectPlan(planName) {
+    const planSelect = document.getElementById('c-plan');
+    if (planSelect) {
+      // find matching option
+      for (let i = 0; i < planSelect.options.length; i++) {
+        if (planSelect.options[i].value === planName) {
+          planSelect.selectedIndex = i;
+          break;
+        }
+      }
+    }
+    const target = document.getElementById('contact');
+    if (target) {
+      const offset = 72;
+      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+    // brief highlight on the plan dropdown
+    setTimeout(() => {
+      if (planSelect) {
+        planSelect.style.borderColor = '#6366f1';
+        planSelect.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.3)';
+        setTimeout(() => { planSelect.style.borderColor = ''; planSelect.style.boxShadow = ''; }, 1800);
+      }
+    }, 650);
+  }
+
+  /* ── Light / Dark mode toggle ── */
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isLight = html.classList.toggle('light');
+    const icon = isLight ? '☀️' : '🌙';
+    const desktopIcon = document.getElementById('theme-icon');
+    const mobileIcon  = document.getElementById('theme-icon-mobile');
+    if (desktopIcon) desktopIcon.textContent = icon;
+    if (mobileIcon)  mobileIcon.textContent  = icon;
+    localStorage.setItem('swiftstatic-theme', isLight ? 'light' : 'dark');
+  }
+
+  // Restore saved preference
+  (function() {
+    const saved = localStorage.getItem('swiftstatic-theme');
+    if (saved === 'light') {
+      document.documentElement.classList.add('light');
+      const desktopIcon = document.getElementById('theme-icon');
+      const mobileIcon  = document.getElementById('theme-icon-mobile');
+      if (desktopIcon) desktopIcon.textContent = '☀️';
+      if (mobileIcon)  mobileIcon.textContent  = '☀️';
+    }
+  })();
+
+  /* ── Toast notification ── */
+  function showToast(message, type = 'success') {
+    const existing = document.getElementById('toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.style.cssText = `
+      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+      z-index: 9999; padding: 14px 22px;
+      background: ${type === 'success' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'};
+      border: 1.5px solid ${type === 'success' ? 'rgba(16,185,129,0.4)' : 'rgba(239,68,68,0.4)'};
+      color: ${type === 'success' ? '#6ee7b7' : '#fca5a5'};
+      border-radius: 14px; font-size: 0.88rem; font-weight: 600;
+      backdrop-filter: blur(16px); white-space: nowrap;
+      transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+      opacity: 0;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+      });
+    });
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(10px)';
+      setTimeout(() => toast.remove(), 400);
+    }, 3500);
+  }
+
+  /* ── Active nav link highlight on scroll ── */
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks  = document.querySelectorAll('.nav-link');
+
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.style.color = link.getAttribute('href') === `#${entry.target.id}` ? '#818cf8' : '';
+        });
+      }
+    });
+  }, { threshold: 0.5 });
+
+  sections.forEach(s => sectionObserver.observe(s));
+
+  /* ── Smooth anchor scroll (override default) ── */
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        const offset = 72; // navbar height
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
