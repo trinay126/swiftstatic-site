@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Preload critical above-fold image -->
+  <link rel="preload" as="image" href="images/logo.png" />
   <title>SwiftStatic – Web Services | Fast. Affordable. Awesome.</title>
   <meta name="description" content="SwiftStatic builds stunning business websites and digital hubs that help your business shine online. Fast, affordable, and professionally crafted." />
 
@@ -67,6 +69,9 @@
       position: fixed; inset: 0; z-index: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
       pointer-events: none;
+      /* GPU compositing layer isolates SVG filter cost */
+      will-change: transform;
+      transform: translateZ(0);
     }
 
     /* ── Gradient text utility ── */
@@ -98,6 +103,9 @@
       filter: blur(90px);
       pointer-events: none;
       z-index: 0;
+      /* Promote each blob to its own GPU compositing layer */
+      will-change: transform;
+      transform: translateZ(0);
     }
 
     /* ── Card glass effect ── */
@@ -110,7 +118,7 @@
 
     /* ── Hover lift ── */
     .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .hover-lift:hover { transform: translateY(-6px); }
+    .hover-lift:hover { transform: translateY(-6px); will-change: transform; }
 
     /* ── Nav link underline ── */
     .nav-link {
@@ -152,8 +160,8 @@
     }
 
     /* ── Section fade-in on scroll ── */
-    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; will-change: opacity, transform; }
+    .reveal.visible { opacity: 1; transform: translateY(0); will-change: auto; }
 
     /* ── Badge pill ── */
     .badge {
@@ -197,7 +205,9 @@
     @media (max-width: 767px) {
       .form-input { font-size: 16px !important; padding: 13px 14px; }
       /* Reduce blob blur radius for perf on mobile */
-      .blob { filter: blur(55px) !important; opacity: 0.7; }
+      .blob { filter: blur(55px) !important; opacity: 0.7; will-change: auto; }
+      /* Disable heavy backdrop-filter on mobile for perf */
+      .glass { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
       /* Tighter section vertical rhythm on phones */
       .section-py { padding-top: 4rem; padding-bottom: 4rem; }
     }
@@ -238,6 +248,8 @@
       animation: logoGlow 2.8s ease-in-out infinite;
       border-radius: 14px;
       transition: animation 0.3s;
+      /* Isolated GPU layer for filter animation */
+      will-change: filter;
     }
     .logo-glow:hover {
       animation: logoGlowHover 1.2s ease-in-out infinite;
@@ -281,6 +293,12 @@
       background: rgba(99,102,241,0.1);
       border-color: rgba(99,102,241,0.3);
     }
+
+    /* ── Content-visibility: skip rendering of off-screen sections ── */
+    #services, #plans, #portfolio, #booking, #contact {
+      content-visibility: auto;
+      contain-intrinsic-block-size: 600px;
+    }
   </style>
 </head>
 <body>
@@ -294,7 +312,7 @@
 
       <!-- Logo -->
       <a href="#home" class="flex items-center">
-        <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-11 w-auto logo-glow" />
+        <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-11 w-auto logo-glow" fetchpriority="high" decoding="async" />
       </a>
 
       <!-- Desktop Nav -->
@@ -950,7 +968,7 @@
       <!-- Brand -->
       <div class="text-center lg:text-left">
         <div class="flex items-center justify-center lg:justify-start mb-3">
-          <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-16 md:h-[72px] w-auto logo-glow" />
+          <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-16 md:h-[72px] w-auto logo-glow" loading="lazy" decoding="async" />
         </div>
         <p class="text-slate-500 text-sm max-w-xs">Building your dream website, fast and affordable. 🚀</p>
         <p class="text-slate-600 text-xs mt-1">© 2026 SwiftStatic Web Services. All rights reserved.</p>
@@ -996,12 +1014,14 @@
      JAVASCRIPT
 ===================================================================== -->
 <script>
-  /* ── Navbar glass on scroll ── */
+  /* ── Navbar glass on scroll (throttled with RAF + passive listener) ── */
   const navbar  = document.getElementById('navbar');
   const scrollTopBtn = document.getElementById('scroll-top');
+  let scrollRAF = null;
 
-  window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY > 20;
+  function onScrollUpdate() {
+    const sy = window.scrollY;
+    const scrolled = sy > 20;
     navbar.style.background = scrolled
       ? 'rgba(11,17,32,0.92)'
       : 'transparent';
@@ -1013,14 +1033,19 @@
       : 'transparent';
 
     // Scroll-to-top button
-    if (window.scrollY > 500) {
+    if (sy > 500) {
       scrollTopBtn.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
       scrollTopBtn.classList.add('opacity-100', 'translate-y-0');
     } else {
       scrollTopBtn.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
       scrollTopBtn.classList.remove('opacity-100', 'translate-y-0');
     }
-  });
+    scrollRAF = null;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!scrollRAF) scrollRAF = requestAnimationFrame(onScrollUpdate);
+  }, { passive: true });
 
   /* ── Mobile menu toggle ── */
   const menuToggle  = document.getElementById('menu-toggle');
@@ -1049,9 +1074,13 @@
 
   /* ── IntersectionObserver – reveal on scroll ── */
   const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
+    entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
+        /* Free GPU memory after animation completes */
+        entry.target.addEventListener('transitionend', () => {
+          entry.target.style.willChange = 'auto';
+        }, { once: true });
         revealObserver.unobserve(entry.target);
       }
     });
