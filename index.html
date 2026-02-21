@@ -3,20 +3,83 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Preload critical above-fold image -->
-  <link rel="preload" as="image" href="images/logo.png" />
-  <title>SwiftStatic – Web Services | Fast. Affordable. Awesome.</title>
-  <meta name="description" content="SwiftStatic builds stunning business websites and digital hubs that help your business shine online. Fast, affordable, and professionally crafted." />
 
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ── Primary SEO ── -->
+  <title>SwiftStatic – Professional Web Design India | Fast, Affordable Websites</title>
+  <meta name="description" content="SwiftStatic builds stunning, fast, and affordable business websites in India. Custom digital hubs, restaurant sites, e-commerce, portfolios — delivered in 3–5 days. Book a free consultation today." />
+  <meta name="keywords" content="web design India, affordable website, business website India, restaurant website, portfolio website, digital hub, SwiftStatic, web development, static website" />
+  <meta name="author" content="SwiftStatic Web Services" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://swiftstatic.vercel.app/" />
+  <meta name="theme-color" content="#0b1120" />
 
-  <!-- Google Fonts -->
+  <!-- ── Open Graph (Facebook / WhatsApp / LinkedIn) ── -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://swiftstatic.vercel.app/" />
+  <meta property="og:title" content="SwiftStatic – Professional Web Design India" />
+  <meta property="og:description" content="Fast, affordable, and stunning websites for Indian businesses. Delivered in 3–5 days. Book a free call today!" />
+  <meta property="og:image" content="https://swiftstatic.vercel.app/images/og-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="SwiftStatic Web Services" />
+  <meta property="og:locale" content="en_IN" />
+
+  <!-- ── Twitter Card ── -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SwiftStatic – Professional Web Design India" />
+  <meta name="twitter:description" content="Fast, affordable, and stunning websites for Indian businesses. Delivered in 3–5 days." />
+  <meta name="twitter:image" content="https://swiftstatic.vercel.app/images/og-preview.png" />
+
+  <!-- ── Structured Data (JSON-LD) ── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "SwiftStatic Web Services",
+    "description": "Professional web design and development for Indian businesses. Fast, affordable, and stunning websites delivered in 3–5 days.",
+    "url": "https://swiftstatic.vercel.app/",
+    "email": "swiftstaticc@gmail.com",
+    "logo": "https://swiftstatic.vercel.app/images/logo.png",
+    "sameAs": ["https://github.com/swiftstaticc-bit"],
+    "priceRange": "₹₹",
+    "areaServed": "India",
+    "serviceType": ["Web Design", "Web Development", "Digital Marketing"],
+    "offers": [
+      { "@type": "Offer", "name": "Basic Website", "price": "5000", "priceCurrency": "INR" },
+      { "@type": "Offer", "name": "Growth Website", "price": "8000", "priceCurrency": "INR" },
+      { "@type": "Offer", "name": "Premium Website", "price": "15000", "priceCurrency": "INR" }
+    ]
+  }
+  </script>
+
+  <!-- ── Preconnect: zero-latency handshakes before requests fire ── -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" />
+  <link rel="dns-prefetch" href="//swiftstaticc-bit.github.io" />
+  <link rel="dns-prefetch" href="//e-commercedemo-swiftstatic.vercel.app" />
 
-  <!-- Vercel Web Analytics -->
+  <!-- ── Preload critical above-fold image ── -->
+  <link rel="preload" as="image" href="images/logo.png" fetchpriority="high" />
+
+  <!-- ── Critical path CSS: paint dark background BEFORE Tailwind loads (eliminates white FOUC & improves FCP) ── -->
+  <style>
+    html{background:#0b1120;color-scheme:dark}
+    body{background:#0b1120;margin:0;font-family:Inter,system-ui,-apple-system,sans-serif}
+    /* Reserve space for navbar so hero doesn't jump (CLS) */
+    #navbar{position:fixed;top:0;left:0;right:0;z-index:50}
+  </style>
+
+  <!-- ── Tailwind CSS CDN ── -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- ── Google Fonts – async/non-render-blocking (big FCP/LCP win) ── -->
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700;800&display=swap"
+    onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700;800&display=swap" /></noscript>
+
+  <!-- ── Vercel Web Analytics ── -->
   <script>
     window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
   </script>
@@ -73,7 +136,7 @@
 
       <!-- Logo -->
       <a href="#home" class="flex items-center">
-        <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-11 w-auto logo-glow" fetchpriority="high" decoding="async" />
+        <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-11 w-auto logo-glow" width="180" height="44" fetchpriority="high" decoding="async" />
       </a>
 
       <!-- Desktop Nav -->
@@ -240,7 +303,7 @@
       <div class="reveal featured-border hover-lift cursor-default group" style="transition-delay:0.1s">
         <div class="relative glass rounded-2xl p-6 md:p-8 h-full hover:shadow-glow">
           <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold px-4 py-1.5 rounded-full tracking-wide whitespace-nowrap">⭐ Most Popular</div>
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500/30 to-red-500/20 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">�</div>
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500/30 to-red-500/20 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">🏪</div>
           <h3 class="text-xl font-bold font-grotesk text-white mb-3">Static Website for Your Business</h3>
           <p class="text-slate-400 text-sm leading-relaxed mb-6">A fully branded, professional website to replace that basic Linktree — built to impress customers and drive real business results.</p>
           <ul class="space-y-2.5">
@@ -460,7 +523,9 @@
           href="https://e-commercedemo-swiftstatic.vercel.app/"
           target="_blank"
           rel="noopener noreferrer"
+          onclick="openDemo('https://e-commercedemo-swiftstatic.vercel.app/'); return false;"
           class="demo-btn"
+          aria-label="Live preview of Ecommerce Demo"
         >
           Live Preview
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -479,7 +544,9 @@
           href="https://swiftstaticc-bit.github.io/BussinessBranding.swiftstatic/"
           target="_blank"
           rel="noopener noreferrer"
+          onclick="openDemo('https://swiftstaticc-bit.github.io/BussinessBranding.swiftstatic/'); return false;"
           class="demo-btn"
+          aria-label="Live preview of Branding and Showcasing website"
         >
           Live Preview
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -498,7 +565,9 @@
           href="https://swiftstaticc-bit.github.io/educationalportfolio.swiftstatic/"
           target="_blank"
           rel="noopener noreferrer"
+          onclick="openDemo('https://swiftstaticc-bit.github.io/educationalportfolio.swiftstatic/'); return false;"
           class="demo-btn"
+          aria-label="Live preview of Educational Website"
         >
           Live Preview
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -517,7 +586,9 @@
           href="https://swiftstaticc-bit.github.io/portfoliodemo.swiftstatic/"
           target="_blank"
           rel="noopener noreferrer"
+          onclick="openDemo('https://swiftstaticc-bit.github.io/portfoliodemo.swiftstatic/'); return false;"
           class="demo-btn"
+          aria-label="Live preview of Portfolio Demo"
         >
           Live Preview
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -852,7 +923,7 @@
       <!-- Brand -->
       <div class="text-center lg:text-left">
         <div class="flex items-center justify-center lg:justify-start mb-3">
-          <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-16 md:h-[72px] w-auto logo-glow" loading="lazy" decoding="async" />
+          <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-16 md:h-[72px] w-auto logo-glow" width="180" height="64" loading="lazy" decoding="async" />
         </div>
         <p class="text-slate-500 text-sm max-w-xs">Building your dream website, fast and affordable. 🚀</p>
         <p class="text-slate-600 text-xs mt-1">© 2026 SwiftStatic Web Services. All rights reserved.</p>

@@ -1,10 +1,35 @@
-/* ================================================================
-   SwiftStatic – main client-side script
+﻿/* ================================================================
+   SwiftStatic â€“ main client-side script
    ================================================================ */
 
-/* ── Navbar glass on scroll (throttled with RAF + passive listener) ── */
-const navbar     = document.getElementById('navbar');
-const scrollTopBtn = document.getElementById('scroll-top');
+/* â”€â”€ Helpers â”€â”€ */
+const $ = id => document.getElementById(id);
+
+function validEmail(v) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
+}
+
+function setError(el, on) {
+  if (on) el.classList.add('error');
+  else     el.classList.remove('error');
+}
+
+/* ── Open demo / mailto (works inside iframes, editors, and mobile) ── */
+function openDemo(url) {
+  // mailto: must use location.href – window.open blocks native mail app on iOS/Android
+  if (url.startsWith('mailto:')) {
+    window.location.href = url;
+    return;
+  }
+  const win = window.open(url, '_blank', 'noopener,noreferrer');
+  if (!win || win.closed || typeof win.closed === 'undefined') {
+    window.location.href = url;
+  }
+}
+
+/* â”€â”€ Navbar glass on scroll (throttled with RAF + passive listener) â”€â”€ */
+const navbar       = $('navbar');
+const scrollTopBtn = $('scroll-top');
 let scrollRAF = null;
 
 function onScrollUpdate() {
@@ -34,12 +59,12 @@ window.addEventListener('scroll', () => {
   if (!scrollRAF) scrollRAF = requestAnimationFrame(onScrollUpdate);
 }, { passive: true });
 
-/* ── Mobile menu toggle ── */
-const menuToggle = document.getElementById('menu-toggle');
-const mobileMenu = document.getElementById('mobile-menu');
-const bar1 = document.getElementById('bar1');
-const bar2 = document.getElementById('bar2');
-const bar3 = document.getElementById('bar3');
+/* â”€â”€ Mobile menu toggle â”€â”€ */
+const menuToggle = $('menu-toggle');
+const mobileMenu = $('mobile-menu');
+const bar1 = $('bar1');
+const bar2 = $('bar2');
+const bar3 = $('bar3');
 let menuOpen = false;
 
 menuToggle.addEventListener('click', () => {
@@ -49,6 +74,7 @@ menuToggle.addEventListener('click', () => {
   bar2.style.opacity   = menuOpen ? '0' : '1';
   bar3.style.transform = menuOpen ? 'rotate(-45deg) translate(4px, -4px)' : '';
   bar3.style.width     = menuOpen ? '20px' : '';
+  mobileMenu.setAttribute('aria-hidden', String(!menuOpen));
 });
 
 function closeMobileMenu() {
@@ -57,9 +83,10 @@ function closeMobileMenu() {
   bar1.style.transform = '';
   bar2.style.opacity   = '1';
   bar3.style.transform = '';
+  mobileMenu.setAttribute('aria-hidden', 'true');
 }
 
-/* ── IntersectionObserver – reveal on scroll ── */
+/* â”€â”€ IntersectionObserver â€“ reveal on scroll â”€â”€ */
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
@@ -70,110 +97,180 @@ const revealObserver = new IntersectionObserver((entries) => {
       revealObserver.unobserve(entry.target);
     }
   });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
 
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-/* ── Set min date for booking calendar ── */
-const dateInput = document.getElementById('b-date');
+/* â”€â”€ Set min date for booking calendar (today) â”€â”€ */
+const dateInput = $('b-date');
 if (dateInput) {
-  dateInput.min = new Date().toISOString().split('T')[0];
+  const today = new Date();
+  const yyyy  = today.getFullYear();
+  const mm    = String(today.getMonth() + 1).padStart(2, '0');
+  const dd    = String(today.getDate()).padStart(2, '0');
+  dateInput.min = `${yyyy}-${mm}-${dd}`;
 }
 
-/* ── Booking form submit ── */
+/* â”€â”€ Submit helpers â”€â”€ */
+function hideFormShowSuccess(formId, successId) {
+  const form    = $(formId);
+  const success = $(successId);
+  if (!form || !success) return;
+  form.style.opacity    = '0';
+  form.style.transition = 'opacity 0.3s';
+  setTimeout(() => {
+    form.classList.add('hidden');
+    success.classList.remove('hidden');
+    success.style.opacity = '0';
+    requestAnimationFrame(() => {
+      success.style.transition = 'opacity 0.4s';
+      success.style.opacity = '1';
+    });
+  }, 300);
+}
+
+/* â”€â”€ Booking form submit â”€â”€ */
 function handleBooking(e) {
   e.preventDefault();
-  const name    = document.getElementById('b-name').value.trim();
-  const email   = document.getElementById('b-email').value.trim();
-  const service = document.getElementById('b-service').value;
-  const date    = document.getElementById('b-date').value;
-  const time    = document.getElementById('b-time').value;
-  const msg     = document.getElementById('b-msg').value.trim();
 
-  if (!name || !email || !service || !date || !time) {
-    showToast('⚠️ Please fill in all required fields.', 'error');
+  const nameEl    = $('b-name');
+  const emailEl   = $('b-email');
+  const serviceEl = $('b-service');
+  const dateEl    = $('b-date');
+  const timeEl    = $('b-time');
+  const msgEl     = $('b-msg');
+
+  const name    = nameEl.value.trim();
+  const email   = emailEl.value.trim();
+  const service = serviceEl.value;
+  const date    = dateEl.value;
+  const time    = timeEl.value;
+  const msg     = msgEl.value.trim();
+
+  // Inline validation
+  let valid = true;
+  [nameEl, serviceEl, dateEl, timeEl].forEach(el => {
+    const empty = !el.value.trim();
+    setError(el, empty);
+    if (empty) valid = false;
+  });
+  const badEmail = !validEmail(email);
+  setError(emailEl, badEmail);
+  if (badEmail) valid = false;
+
+  if (!valid) {
+    showToast('âš ï¸ Please fill in all required fields correctly.', 'error');
     return;
   }
 
-  // Try API first; fallback to mailto
+  const btn     = e.target.querySelector('button[type="submit"]');
+  const btnText = btn.innerHTML;
+  btn.disabled  = true;
+  btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:_spin .7s linear infinite"></span> Sending…';
+
   fetch('/api/booking', {
-    method: 'POST',
+    method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, service, date, time, message: msg }),
+    body:    JSON.stringify({ name, email, service, date, time, message: msg }),
   })
-    .then(res => res.ok ? res.json() : Promise.reject())
-    .then(() => {
-      showToast('🎉 Booking received! We\'ll confirm your call soon.', 'success');
+    .then(async res => {
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        showToast('ðŸŽ‰ Booking received! We\'ll confirm your call soon.', 'success');
+        hideFormShowSuccess('booking-form', 'booking-success');
+      } else {
+        throw new Error(data.message || 'Server error');
+      }
     })
     .catch(() => {
-      // Server not available – fallback to mailto
+      // Graceful fallback to mailto
       const subject = encodeURIComponent(`Free Call Booking: ${name}`);
-      const body = encodeURIComponent(
+      const body    = encodeURIComponent(
         `Name: ${name}\nEmail: ${email}\nService: ${service}\nDate: ${date}\nTime: ${time}\n\nMessage:\n${msg || '(none)'}`
       );
-      window.location.href = `mailto:swiftstaticc@gmail.com?subject=${subject}&body=${body}`;
-      showToast('🎉 Email client opened! We\'ll confirm your call soon.', 'success');
+      openDemo(`mailto:swiftstaticc@gmail.com?subject=${subject}&body=${body}`);
+      showToast('ðŸ“§ Opening email client to complete booking.', 'success');
+      hideFormShowSuccess('booking-form', 'booking-success');
+    })
+    .finally(() => {
+      btn.disabled  = false;
+      btn.innerHTML = btnText;
     });
-
-  const form    = document.getElementById('booking-form');
-  const success = document.getElementById('booking-success');
-  form.style.opacity = '0';
-  form.style.transition = 'opacity 0.3s';
-  setTimeout(() => {
-    form.classList.add('hidden');
-    success.classList.remove('hidden');
-  }, 300);
 }
 
-/* ── Contact form submit ── */
+/* â”€â”€ Contact form submit â”€â”€ */
 function handleContact(e) {
   e.preventDefault();
-  const name    = document.getElementById('c-name').value.trim();
-  const email   = document.getElementById('c-email').value.trim();
-  const plan    = document.getElementById('c-plan').value;
-  const subject = document.getElementById('c-subject').value.trim();
-  const message = document.getElementById('c-message').value.trim();
 
-  if (!name || !email || !subject || !message) {
-    showToast('⚠️ Please fill in all fields.', 'error');
+  const nameEl    = $('c-name');
+  const emailEl   = $('c-email');
+  const planEl    = $('c-plan');
+  const subjectEl = $('c-subject');
+  const msgEl     = $('c-message');
+
+  const name    = nameEl.value.trim();
+  const email   = emailEl.value.trim();
+  const plan    = planEl.value;
+  const subject = subjectEl.value.trim();
+  const message = msgEl.value.trim();
+
+  // Inline validation
+  let valid = true;
+  [nameEl, subjectEl, msgEl].forEach(el => {
+    const empty = !el.value.trim();
+    setError(el, empty);
+    if (empty) valid = false;
+  });
+  const badEmail = !validEmail(email);
+  setError(emailEl, badEmail);
+  if (badEmail) valid = false;
+
+  if (!valid) {
+    showToast('âš ï¸ Please fill in all required fields correctly.', 'error');
     return;
   }
 
+  const btn     = e.target.querySelector('button[type="submit"]');
+  const btnText = btn.innerHTML;
+  btn.disabled  = true;
+  btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:_spin .7s linear infinite"></span> Sending…';
+
   fetch('/api/contact', {
-    method: 'POST',
+    method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, plan, subject, message }),
+    body:    JSON.stringify({ name, email, plan, subject, message }),
   })
-    .then(res => res.ok ? res.json() : Promise.reject())
-    .then(() => {
-      showToast('✅ Message sent! We\'ll reply within 24 hours.', 'success');
+    .then(async res => {
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        showToast('âœ… Message sent! We\'ll reply within 24 hours.', 'success');
+        hideFormShowSuccess('contact-form', 'contact-success');
+      } else {
+        throw new Error(data.message || 'Server error');
+      }
     })
     .catch(() => {
-      const planLine = plan ? `Interested Plan: ${plan}\n` : '';
+      const planLine    = plan ? `Interested Plan: ${plan}\n` : '';
       const mailSubject = encodeURIComponent(`[SwiftStatic Contact] ${subject}`);
-      const mailBody = encodeURIComponent(
+      const mailBody    = encodeURIComponent(
         `Name: ${name}\nEmail: ${email}\n${planLine}Subject: ${subject}\n\nMessage:\n${message}`
       );
-      window.location.href = `mailto:swiftstaticc@gmail.com?subject=${mailSubject}&body=${mailBody}`;
-      showToast('✅ Email client opened! We\'ll reply within 24 hours.', 'success');
+      openDemo(`mailto:swiftstaticc@gmail.com?subject=${mailSubject}&body=${mailBody}`);
+      showToast('ðŸ“§ Opening email client to send your message.', 'success');
+      hideFormShowSuccess('contact-form', 'contact-success');
+    })
+    .finally(() => {
+      btn.disabled  = false;
+      btn.innerHTML = btnText;
     });
-
-  const form    = document.getElementById('contact-form');
-  const success = document.getElementById('contact-success');
-  form.style.opacity = '0';
-  form.style.transition = 'opacity 0.3s';
-  setTimeout(() => {
-    form.classList.add('hidden');
-    success.classList.remove('hidden');
-  }, 300);
 }
 
-/* ── Select plan from pricing cards ── */
+/* â”€â”€ Select plan from pricing cards â”€â”€ */
 function selectPlan(planName) {
-  const planSelect = document.getElementById('c-plan');
+  const planSelect = $('c-plan');
   if (planSelect) {
     for (let i = 0; i < planSelect.options.length; i++) {
-      if (planSelect.options[i].value === planName) {
+      if (planSelect.options[i].text === planName || planSelect.options[i].value === planName) {
         planSelect.selectedIndex = i;
         break;
       }
@@ -181,82 +278,86 @@ function selectPlan(planName) {
   }
   const target = document.getElementById('contact');
   if (target) {
-    const offset = 72;
-    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+    const offset = 80;
+    const top    = target.getBoundingClientRect().top + window.scrollY - offset;
     window.scrollTo({ top, behavior: 'smooth' });
   }
   setTimeout(() => {
     if (planSelect) {
       planSelect.style.borderColor = '#6366f1';
-      planSelect.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.3)';
+      planSelect.style.boxShadow   = '0 0 0 3px rgba(99,102,241,0.3)';
       setTimeout(() => {
         planSelect.style.borderColor = '';
-        planSelect.style.boxShadow = '';
-      }, 1800);
+        planSelect.style.boxShadow   = '';
+      }, 2000);
     }
-  }, 650);
+  }, 700);
 }
 
-/* ── Light / Dark mode toggle ── */
+/* â”€â”€ Light / Dark mode toggle â”€â”€ */
 function toggleTheme() {
   const html    = document.documentElement;
   const isLight = html.classList.toggle('light');
-  const icon    = isLight ? '☀️' : '🌙';
-  const desktopIcon = document.getElementById('theme-icon');
-  const mobileIcon  = document.getElementById('theme-icon-mobile');
-  if (desktopIcon) desktopIcon.textContent = icon;
-  if (mobileIcon)  mobileIcon.textContent  = icon;
+  const icon    = isLight ? 'â˜€ï¸' : 'ðŸŒ™';
+  const deskIcon   = $('theme-icon');
+  const mobileIcon = $('theme-icon-mobile');
+  if (deskIcon)   deskIcon.textContent   = icon;
+  if (mobileIcon) mobileIcon.textContent = icon;
   localStorage.setItem('swiftstatic-theme', isLight ? 'light' : 'dark');
 }
 
 // Restore saved theme preference
 (function () {
-  const saved = localStorage.getItem('swiftstatic-theme');
-  if (saved === 'light') {
+  if (localStorage.getItem('swiftstatic-theme') === 'light') {
     document.documentElement.classList.add('light');
-    const desktopIcon = document.getElementById('theme-icon');
-    const mobileIcon  = document.getElementById('theme-icon-mobile');
-    if (desktopIcon) desktopIcon.textContent = '☀️';
-    if (mobileIcon)  mobileIcon.textContent  = '☀️';
+    const deskIcon   = $('theme-icon');
+    const mobileIcon = $('theme-icon-mobile');
+    if (deskIcon)   deskIcon.textContent   = 'â˜€ï¸';
+    if (mobileIcon) mobileIcon.textContent = 'â˜€ï¸';
   }
 })();
 
-/* ── Toast notification ── */
+/* â”€â”€ Toast notification â”€â”€ */
+let toastTimer = null;
 function showToast(message, type = 'success') {
-  const existing = document.getElementById('toast');
+  const existing = $('toast');
   if (existing) existing.remove();
+  if (toastTimer) clearTimeout(toastTimer);
 
-  const toast = document.createElement('div');
-  toast.id = 'toast';
+  const isSuccess = type === 'success';
+  const toast     = document.createElement('div');
+  toast.id        = 'toast';
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
   toast.style.cssText = `
-    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
-    z-index: 9999; padding: 14px 22px;
-    background: ${type === 'success' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'};
-    border: 1.5px solid ${type === 'success' ? 'rgba(16,185,129,0.4)' : 'rgba(239,68,68,0.4)'};
-    color: ${type === 'success' ? '#6ee7b7' : '#fca5a5'};
-    border-radius: 14px; font-size: 0.88rem; font-weight: 600;
-    backdrop-filter: blur(16px); white-space: nowrap;
-    transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
-    opacity: 0;
+    position:fixed; bottom:80px; left:50%;
+    transform:translateX(-50%) translateY(20px);
+    z-index:9999; padding:14px 22px;
+    background:${isSuccess ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'};
+    border:1.5px solid ${isSuccess ? 'rgba(16,185,129,0.4)' : 'rgba(239,68,68,0.4)'};
+    color:${isSuccess ? '#6ee7b7' : '#fca5a5'};
+    border-radius:14px; font-size:0.88rem; font-weight:600;
+    backdrop-filter:blur(16px); white-space:nowrap;
+    max-width:calc(100vw - 40px); text-align:center;
+    transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+    opacity:0;
   `;
   toast.textContent = message;
   document.body.appendChild(toast);
 
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      toast.style.opacity = '1';
-      toast.style.transform = 'translateX(-50%) translateY(0)';
-    });
-  });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    toast.style.opacity   = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+  }));
 
-  setTimeout(() => {
-    toast.style.opacity = '0';
+  toastTimer = setTimeout(() => {
+    toast.style.opacity   = '0';
     toast.style.transform = 'translateX(-50%) translateY(10px)';
     setTimeout(() => toast.remove(), 400);
-  }, 3500);
+  }, 3800);
 }
 
-/* ── Active nav link highlight on scroll ── */
+/* â”€â”€ Active nav link highlight on scroll â”€â”€ */
 const sections = document.querySelectorAll('section[id]');
 const navLinks  = document.querySelectorAll('.nav-link');
 
@@ -268,19 +369,27 @@ const sectionObserver = new IntersectionObserver((entries) => {
       });
     }
   });
-}, { threshold: 0.5 });
+}, { threshold: 0.45 });
 
 sections.forEach(s => sectionObserver.observe(s));
 
-/* ── Smooth anchor scroll (override default) ── */
+/* â”€â”€ Smooth anchor scroll â”€â”€ */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
-    const target = document.querySelector(this.getAttribute('href'));
+    const href = this.getAttribute('href');
+    if (href === '#') return;
+    const target = document.querySelector(href);
     if (target) {
       e.preventDefault();
       const offset = 72;
-      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      const top    = target.getBoundingClientRect().top + window.scrollY - offset;
       window.scrollTo({ top, behavior: 'smooth' });
     }
   });
+});
+
+/* â”€â”€ Clear error state when user types in a field â”€â”€ */
+document.querySelectorAll('.form-input').forEach(input => {
+  input.addEventListener('input', () => setError(input, false));
+  input.addEventListener('change', () => setError(input, false));
 });
