@@ -1,0 +1,30 @@
+﻿@import "tailwindcss";
+
+@theme {
+  --font-grotesk: 'Space Grotesk', sans-serif;
+
+  --shadow-glow-sm: 0 0 20px rgba(99,102,241,0.3);
+  --shadow-glow: 0 0 40px rgba(99,102,241,0.4);
+  --shadow-glow-lg: 0 0 80px rgba(99,102,241,0.3);
+
+  --animate-float: float 8s ease-in-out infinite;
+  --animate-fade-in-up: fadeInUp 0.5s ease both;
+  --animate-pulse-slow: pulse 4s ease-in-out infinite;
+  --animate-shimmer: shimmer 3.5s linear infinite;
+
+  --color-navy: #0b1120;
+  --color-brand: #6366f1;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%      { transform: translateY(-9px); }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    0%   { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+}

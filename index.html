@@ -55,23 +55,28 @@
   <!-- ── Preconnect: zero-latency handshakes before requests fire ── -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://cdn.tailwindcss.com" />
   <link rel="dns-prefetch" href="//swiftstaticc-bit.github.io" />
   <link rel="dns-prefetch" href="//e-commercedemo-swiftstatic.vercel.app" />
 
   <!-- ── Preload critical above-fold image ── -->
   <link rel="preload" as="image" href="images/logo.png" fetchpriority="high" />
 
-  <!-- ── Critical path CSS: paint dark background BEFORE Tailwind loads (eliminates white FOUC & improves FCP) ── -->
+  <!-- Critical inline CSS: instant above-fold paint before any external file loads -->
   <style>
-    html{background:#0b1120;color-scheme:dark}
-    body{background:#0b1120;margin:0;font-family:Inter,system-ui,-apple-system,sans-serif}
-    /* Reserve space for navbar so hero doesn't jump (CLS) */
-    #navbar{position:fixed;top:0;left:0;right:0;z-index:50}
+    *,*::before,*::after{box-sizing:border-box}
+    html{background:#0b1120;color-scheme:dark;scroll-behavior:smooth;scroll-padding-top:72px}
+    body{background:#0b1120;margin:0;color:#f1f5f9;font-family:Inter,system-ui,-apple-system,sans-serif;overflow-x:hidden}
+    #navbar{position:fixed;top:0;left:0;right:0;z-index:50;background:transparent}
+    .hidden{display:none!important}
+    #home{min-height:100svh;display:flex;align-items:center;justify-content:center;position:relative}
+    #mobile-menu{max-height:0;overflow:hidden}
+    .reveal{opacity:0;transform:translateY(18px)}
+    #scroll-top{opacity:0;pointer-events:none}
   </style>
 
-  <!-- ── Tailwind CSS CDN ── -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Pre-built local Tailwind CSS (replaces 112KB render-blocking CDN script) -->
+  <link rel="preload" as="style" href="tw.css" fetchpriority="high" />
+  <link rel="stylesheet" href="tw.css" />
 
   <!-- ── Google Fonts – async/non-render-blocking (big FCP/LCP win) ── -->
   <link rel="preload" as="style"
@@ -85,42 +90,8 @@
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
 
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans:  ['Inter', 'sans-serif'],
-            grotesk: ['Space Grotesk', 'sans-serif'],
-          },
-          colors: {
-            navy:   { DEFAULT: '#0b1120', 50: '#f0f4ff', 100: '#dce8ff', 800: '#111827', 900: '#0b1120' },
-            brand:  { DEFAULT: '#6366f1', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' },
-            glow:   '#3b82f6',
-          },
-          animation: {
-            'float':        'float 8s ease-in-out infinite',
-            'fade-in-up':   'fadeInUp 0.5s ease both',
-            'pulse-slow':   'pulse 4s ease-in-out infinite',
-            'shimmer':      'shimmer 3.5s linear infinite',
-          },
-          keyframes: {
-            float:      { '0%,100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-9px)' } },
-            fadeInUp:   { from: { opacity: '0', transform: 'translateY(18px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
-            shimmer:    { '0%': { backgroundPosition: '0% center' }, '100%': { backgroundPosition: '200% center' } },
-          },
-          backgroundImage: {
-            'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-          },
-          boxShadow: {
-            'glow-sm': '0 0 20px rgba(99,102,241,0.3)',
-            'glow':    '0 0 40px rgba(99,102,241,0.4)',
-            'glow-lg': '0 0 80px rgba(99,102,241,0.3)',
-          }
-        }
-      }
-    }
-  </script>
+  <!-- Preload main script for faster interaction -->
+  <link rel="preload" as="script" href="script.js" />
 
   <link rel="stylesheet" href="style.css" />
 

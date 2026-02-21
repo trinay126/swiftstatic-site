@@ -5,15 +5,19 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "build-css": "node_modules\\.bin\\tailwindcss.cmd -i tw-input.css -o tw.css --minify"
   },
   "dependencies": {
+    "compression": "^1.8.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-rate-limit": "^7.4.0",
-    "nodemailer": "^6.9.14"
+    "nodemailer": "^6.9.14",
+    "tailwindcss": "^4.2.0"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.2.0",
     "nodemon": "^3.1.4"
   },
   "engines": {

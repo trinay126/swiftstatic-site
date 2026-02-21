@@ -16,8 +16,9 @@
 require('dotenv').config();
 const express    = require('express');
 const nodemailer = require('nodemailer');
-const rateLimit  = require('express-rate-limit');
-const path       = require('path');
+const compression = require('compression');
+const rateLimit   = require('express-rate-limit');
+const path        = require('path');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +31,21 @@ if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     '   Copy .env.example → .env and add your Gmail App Password to enable emails.'
   );
 }
+
+/* ── Gzip compression: cuts payload 60-80%, biggest TTFB win ── */
+app.use(compression({ level: 6, threshold: 1024 }));
+
+/* ── Early Hints: preload critical assets on HTML page requests ── */
+app.use((req, res, next) => {
+  if (req.method === 'GET' && (req.path === '/' || req.path.endsWith('.html'))) {
+    res.setHeader('Link', [
+      '</tw.css>; rel=preload; as=style',
+      '</style.css>; rel=preload; as=style',
+      '</script.js>; rel=preload; as=script',
+    ].join(', '));
+  }
+  next();
+});
 
 /* ── Security headers ── */
 app.use((_req, res, next) => {
