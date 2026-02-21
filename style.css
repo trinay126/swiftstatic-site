@@ -749,3 +749,51 @@ footer {
 
 /* ── Ensure blobs don't create unnecessary GPU layers when not animated ── */
 .blob { will-change: auto; transform: translateZ(0); }
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE PERFORMANCE — kill the three biggest lag sources
+   on phones / low-end devices
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+  /* 1. BLOBS — large blurred divs trigger GPU compositing on every scroll.
+        Simply hide them; the gradient backgrounds still paint correctly. */
+  .blob { display: none !important; }
+
+  /* 2. BACKDROP-FILTER — blur(Xpx) is extremely GPU-heavy on mobile.
+        Replace with a solid semi-transparent fallback that looks fine. */
+  .glass,
+  #mobile-menu,
+  [class*="backdrop-blur"],
+  [class*="backdrop_blur"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(11, 17, 32, 0.92) !important;
+  }
+
+  /* 3. FLOAT + FADE ANIMATIONS — animating transform/opacity forces
+        the browser to repaint on every frame. Disable on mobile. */
+  .animate-float,
+  [class*="animate-fade"],
+  [style*="animation-delay"] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* 4. HOVER-LIFT — hover effects don't exist on touch devices anyway;
+        removing transition reduces style-recalc cost on scroll. */
+  .hover-lift {
+    transition: none !important;
+  }
+  .hover-lift:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* 5. HERO GRID — the repeating gradient pattern repaints on scroll.
+        Replace with a simple transparent bg on mobile. */
+  #home [style*="background-image: linear-gradient"] {
+    display: none !important;
+  }
+}
