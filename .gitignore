@@ -9,9 +9,10 @@ desktop.ini
 *.swp
 *.swo
 
-# Node (if you add a build step later)
+# Node
 node_modules/
 npm-debug.log*
+.env
 
 # Distribution
 dist/
