@@ -295,10 +295,107 @@
     }
 
     /* ── Content-visibility: skip rendering of off-screen sections ── */
-    #services, #plans, #portfolio, #booking, #contact {
+    #services, #plans, #portfolio, #demos, #booking, #contact {
       content-visibility: auto;
       contain-intrinsic-block-size: 600px;
     }
+
+    /* ── Live Demos section ── */
+    .demo-card {
+      position: relative;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(99, 102, 241, 0.18);
+      border-radius: 20px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: transform 0.32s ease, border-color 0.32s ease, box-shadow 0.32s ease;
+      will-change: transform;
+      overflow: hidden;
+    }
+    .demo-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.12) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+    }
+    .demo-card:hover {
+      transform: translateY(-7px);
+      border-color: rgba(99, 102, 241, 0.55);
+      box-shadow: 0 0 0 1px rgba(99,102,241,0.2), 0 8px 40px rgba(99,102,241,0.22), 0 0 60px rgba(99,102,241,0.09);
+    }
+    .demo-card:hover::before { opacity: 1; }
+    .demo-card-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.35rem;
+      flex-shrink: 0;
+    }
+    .demo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      padding: 4px 11px;
+      border-radius: 50px;
+      background: rgba(99,102,241,0.12);
+      border: 1px solid rgba(99,102,241,0.28);
+      color: #a5b4fc;
+      width: fit-content;
+    }
+    .demo-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 44px;
+      padding: 0 22px;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #fff;
+      font-size: 0.875rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.25s ease, transform 0.22s ease, box-shadow 0.25s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      align-self: flex-start;
+      margin-top: auto;
+    }
+    .demo-btn:hover {
+      background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(99,102,241,0.45);
+    }
+    .demo-btn svg { flex-shrink: 0; }
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 640px)  { .demo-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .demo-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 767px)  {
+      .demo-card { padding: 24px 20px; }
+      .demo-btn  { width: 100%; justify-content: center; }
+    }
+    /* Light mode overrides for demo cards */
+    html.light .demo-card { background: rgba(255,255,255,0.92); border-color: rgba(99,102,241,0.2); }
+    html.light .demo-card:hover { border-color: rgba(99,102,241,0.5); }
   </style>
 </head>
 <body>
@@ -319,6 +416,7 @@
       <nav class="hidden md:flex items-center gap-8">
         <a href="#services" class="nav-link">Services</a>
         <a href="#plans" class="nav-link">Plans</a>
+        <a href="#demos" class="nav-link">Demos</a>
         <a href="#portfolio" class="nav-link">Work</a>
         <a href="#booking" class="nav-link">Free Call</a>
         <a href="#contact" class="nav-link">Contact</a>
@@ -349,6 +447,7 @@
     <div class="px-5 py-4 flex flex-col gap-4">
       <a href="#services"  class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Services</a>
       <a href="#plans"     class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Plans</a>
+      <a href="#demos"     class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Demos</a>
       <a href="#portfolio" class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Work</a>
       <a href="#booking"   class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Free Call</a>
       <a href="#contact"   class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Contact</a>
@@ -645,6 +744,127 @@
 <!-- =====================================================================
      OUR WORK — DIVIDER
 ===================================================================== -->
+<div class="relative py-6">
+  <div class="flex items-center gap-4 max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent"></div>
+    <div class="badge bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
+      <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse"></span>
+      LIVE DEMOS
+    </div>
+    <div class="h-px flex-1 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent"></div>
+  </div>
+</div>
+
+
+<!-- =====================================================================
+     LIVE WORKING DEMOS
+===================================================================== -->
+<section id="demos" class="relative py-16 md:py-24 overflow-hidden">
+  <div class="blob w-[500px] h-[500px] bg-indigo-600/15 top-[-80px] right-[-120px]"></div>
+  <div class="blob w-[380px] h-[380px] bg-purple-600/10 bottom-[-60px] left-[-80px]"></div>
+
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+
+    <!-- Heading -->
+    <div class="text-center mb-12 md:mb-16 reveal">
+      <span class="badge bg-indigo-500/10 border border-indigo-500/25 text-indigo-400 mb-5">
+        <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse-slow"></span>
+        Live Working Demos
+      </span>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black font-grotesk text-white mb-4">
+        See what we build —
+        <span class="text-gradient"> live &amp; real.</span>
+      </h2>
+      <p class="text-slate-400 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
+        These aren't mockups. Click any card to explore a fully deployed, working website we've crafted.
+      </p>
+    </div>
+
+    <!-- Cards grid -->
+    <div class="demo-grid">
+
+      <!-- Card 1: Ecommerce -->
+      <div class="demo-card reveal">
+        <div class="demo-card-icon">🛒</div>
+        <div class="demo-badge">E-commerce</div>
+        <h3 class="text-white font-bold font-grotesk text-lg leading-snug">Ecommerce Demo</h3>
+        <p class="text-slate-400 text-sm leading-relaxed flex-1">
+          Modern e-commerce with WhatsApp integration for direct product ordering.
+        </p>
+        <a
+          href="https://e-commercedemo-swiftstatic.vercel.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="demo-btn"
+        >
+          Live Preview
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <!-- Card 2: Branding -->
+      <div class="demo-card reveal">
+        <div class="demo-card-icon">🎨</div>
+        <div class="demo-badge">Branding</div>
+        <h3 class="text-white font-bold font-grotesk text-lg leading-snug">Branding &amp; Showcasing</h3>
+        <p class="text-slate-400 text-sm leading-relaxed flex-1">
+          Professional branding websites for restaurants, cafes, and local businesses.
+        </p>
+        <a
+          href="https://swiftstaticc-bit.github.io/BussinessBranding.swiftstatic/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="demo-btn"
+        >
+          Live Preview
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <!-- Card 3: Educational -->
+      <div class="demo-card reveal">
+        <div class="demo-card-icon">📚</div>
+        <div class="demo-badge">Education</div>
+        <h3 class="text-white font-bold font-grotesk text-lg leading-snug">Educational Website</h3>
+        <p class="text-slate-400 text-sm leading-relaxed flex-1">
+          Websites designed for schools, junior colleges and educational institutions.
+        </p>
+        <a
+          href="https://swiftstaticc-bit.github.io/educationalportfolio.swiftstatic/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="demo-btn"
+        >
+          Live Preview
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <!-- Card 4: Portfolio -->
+      <div class="demo-card reveal">
+        <div class="demo-card-icon">💼</div>
+        <div class="demo-badge">Portfolio</div>
+        <h3 class="text-white font-bold font-grotesk text-lg leading-snug">Portfolio Demo</h3>
+        <p class="text-slate-400 text-sm leading-relaxed flex-1">
+          Clean personal portfolio websites for students and professionals.
+        </p>
+        <a
+          href="https://swiftstaticc-bit.github.io/portfoliodemo.swiftstatic/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="demo-btn"
+        >
+          Live Preview
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+    </div><!-- /demo-grid -->
+  </div>
+</section>
+
+
+<!-- divider -->
 <div class="relative py-6">
   <div class="flex items-center gap-4 max-w-7xl mx-auto px-5 lg:px-8">
     <div class="h-px flex-1 bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
