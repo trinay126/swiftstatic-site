@@ -35,15 +35,25 @@ let scrollRAF = null;
 function onScrollUpdate() {
   const sy = window.scrollY;
   const scrolled = sy > 20;
-  navbar.style.background = scrolled
-    ? 'rgba(11,17,32,0.92)'
-    : 'transparent';
-  navbar.style.boxShadow = scrolled
-    ? '0 4px 40px rgba(0,0,0,0.5), 0 1px 0 rgba(99,102,241,0.15)'
-    : 'none';
-  navbar.style.borderBottomColor = scrolled
-    ? 'rgba(255,255,255,0.07)'
-    : 'transparent';
+  const isLight = document.documentElement.classList.contains('light');
+
+  if (isLight) {
+    // In light mode, clear all inline styles — CSS handles the appearance
+    navbar.style.background        = '';
+    navbar.style.boxShadow         = '';
+    navbar.style.borderBottomColor = '';
+    navbar.style.borderBottom      = '';
+  } else {
+    navbar.style.background = scrolled
+      ? 'rgba(11,17,32,0.92)'
+      : 'transparent';
+    navbar.style.boxShadow = scrolled
+      ? '0 4px 40px rgba(0,0,0,0.5), 0 1px 0 rgba(99,102,241,0.15)'
+      : 'none';
+    navbar.style.borderBottomColor = scrolled
+      ? 'rgba(255,255,255,0.07)'
+      : 'transparent';
+  }
 
   if (sy > 500) {
     scrollTopBtn.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
@@ -75,6 +85,7 @@ menuToggle.addEventListener('click', () => {
   bar3.style.transform = menuOpen ? 'rotate(-45deg) translate(4px, -4px)' : '';
   bar3.style.width     = menuOpen ? '20px' : '';
   mobileMenu.setAttribute('aria-hidden', String(!menuOpen));
+  menuToggle.setAttribute('aria-expanded', String(menuOpen));
 });
 
 function closeMobileMenu() {
@@ -84,6 +95,7 @@ function closeMobileMenu() {
   bar2.style.opacity   = '1';
   bar3.style.transform = '';
   mobileMenu.setAttribute('aria-hidden', 'true');
+  menuToggle.setAttribute('aria-expanded', 'false');
 }
 
 /* â”€â”€ IntersectionObserver â€“ reveal on scroll â”€â”€ */
@@ -162,7 +174,7 @@ function handleBooking(e) {
   if (badEmail) valid = false;
 
   if (!valid) {
-    showToast('âš ï¸ Please fill in all required fields correctly.', 'error');
+    showToast('⚠️ Please fill in all required fields correctly.', 'error');
     return;
   }
 
@@ -179,7 +191,7 @@ function handleBooking(e) {
     .then(async res => {
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        showToast('ðŸŽ‰ Booking received! We\'ll confirm your call soon.', 'success');
+        showToast('🎉 Booking received! We\'ll confirm your call soon.', 'success');
         hideFormShowSuccess('booking-form', 'booking-success');
       } else {
         throw new Error(data.message || 'Server error');
@@ -192,7 +204,7 @@ function handleBooking(e) {
         `Name: ${name}\nEmail: ${email}\nService: ${service}\nDate: ${date}\nTime: ${time}\n\nMessage:\n${msg || '(none)'}`
       );
       openDemo(`mailto:swiftstaticc@gmail.com?subject=${subject}&body=${body}`);
-      showToast('ðŸ“§ Opening email client to complete booking.', 'success');
+      showToast('📧 Opening email client to complete booking.', 'success');
       hideFormShowSuccess('booking-form', 'booking-success');
     })
     .finally(() => {
@@ -229,7 +241,7 @@ function handleContact(e) {
   if (badEmail) valid = false;
 
   if (!valid) {
-    showToast('âš ï¸ Please fill in all required fields correctly.', 'error');
+    showToast('⚠️ Please fill in all required fields correctly.', 'error');
     return;
   }
 
@@ -246,7 +258,7 @@ function handleContact(e) {
     .then(async res => {
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        showToast('âœ… Message sent! We\'ll reply within 24 hours.', 'success');
+        showToast('✅ Message sent! We\'ll reply within 24 hours.', 'success');
         hideFormShowSuccess('contact-form', 'contact-success');
       } else {
         throw new Error(data.message || 'Server error');
@@ -259,7 +271,7 @@ function handleContact(e) {
         `Name: ${name}\nEmail: ${email}\n${planLine}Subject: ${subject}\n\nMessage:\n${message}`
       );
       openDemo(`mailto:swiftstaticc@gmail.com?subject=${mailSubject}&body=${mailBody}`);
-      showToast('ðŸ“§ Opening email client to send your message.', 'success');
+      showToast('📧 Opening email client to send your message.', 'success');
       hideFormShowSuccess('contact-form', 'contact-success');
     })
     .finally(() => {
@@ -297,26 +309,28 @@ function selectPlan(planName) {
   }, 700);
 }
 
-/* â”€â”€ Light / Dark mode toggle â”€â”€ */
+/* ── Light / Dark mode toggle ── */
 function toggleTheme() {
   const html    = document.documentElement;
   const isLight = html.classList.toggle('light');
-  const icon    = isLight ? 'â˜€ï¸' : 'ðŸŒ™';
+  const icon    = isLight ? '☀️' : '🌙';
   const deskIcon   = $('theme-icon');
   const mobileIcon = $('theme-icon-mobile');
   if (deskIcon)   deskIcon.textContent   = icon;
   if (mobileIcon) mobileIcon.textContent = icon;
   localStorage.setItem('swiftstatic-theme', isLight ? 'light' : 'dark');
+  // Re-apply navbar colour for the new theme immediately
+  onScrollUpdate();
 }
 
-// Restore saved theme preference
+// Restore saved theme preference (icons updated after DOM ready)
 (function () {
   if (localStorage.getItem('swiftstatic-theme') === 'light') {
     document.documentElement.classList.add('light');
     const deskIcon   = $('theme-icon');
     const mobileIcon = $('theme-icon-mobile');
-    if (deskIcon)   deskIcon.textContent   = 'â˜€ï¸';
-    if (mobileIcon) mobileIcon.textContent = 'â˜€ï¸';
+    if (deskIcon)   deskIcon.textContent   = '☀️';
+    if (mobileIcon) mobileIcon.textContent = '☀️';
   }
 })();
 
@@ -328,20 +342,34 @@ function showToast(message, type = 'success') {
   if (toastTimer) clearTimeout(toastTimer);
 
   const isSuccess = type === 'success';
+  const isLight   = document.documentElement.classList.contains('light');
   const toast     = document.createElement('div');
   toast.id        = 'toast';
   toast.setAttribute('role', 'status');
   toast.setAttribute('aria-live', 'polite');
+
+  // Use opaque backgrounds in light mode so the toast is always readable
+  const bg       = isLight
+    ? (isSuccess ? 'rgba(220,252,231,0.98)' : 'rgba(254,226,226,0.98)')
+    : (isSuccess ? 'rgba(16,185,129,0.15)'  : 'rgba(239,68,68,0.15)');
+  const bdr      = isLight
+    ? (isSuccess ? 'rgba(34,197,94,0.5)'    : 'rgba(239,68,68,0.5)')
+    : (isSuccess ? 'rgba(16,185,129,0.4)'   : 'rgba(239,68,68,0.4)');
+  const col      = isLight
+    ? (isSuccess ? '#166534'                 : '#991b1b')
+    : (isSuccess ? '#6ee7b7'                 : '#fca5a5');
+
   toast.style.cssText = `
     position:fixed; bottom:80px; left:50%;
     transform:translateX(-50%) translateY(20px);
     z-index:9999; padding:14px 22px;
-    background:${isSuccess ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'};
-    border:1.5px solid ${isSuccess ? 'rgba(16,185,129,0.4)' : 'rgba(239,68,68,0.4)'};
-    color:${isSuccess ? '#6ee7b7' : '#fca5a5'};
+    background:${bg};
+    border:1.5px solid ${bdr};
+    color:${col};
     border-radius:14px; font-size:0.88rem; font-weight:600;
     backdrop-filter:blur(16px); white-space:nowrap;
     max-width:calc(100vw - 40px); text-align:center;
+    box-shadow:0 4px 24px rgba(0,0,0,0.12);
     transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
     opacity:0;
   `;

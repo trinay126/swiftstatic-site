@@ -150,7 +150,8 @@ h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; }
 #mobile-menu.open { max-height: 520px; }
 
 /* ── Global ── */
-html { scroll-padding-top: 72px; }
+html { scroll-padding-top: 80px; }
+/* 44px minimum touch targets for accessibility */
 a, button { -webkit-tap-highlight-color: transparent; min-height: 44px; }
 button:active, a:active { opacity: 0.82; }
 :focus-visible { outline: 2px solid #6366f1; outline-offset: 3px; border-radius: 4px; }
@@ -226,30 +227,106 @@ footer { content-visibility: auto; contain-intrinsic-size: 0 280px; }
 @media (min-width: 1024px) { .demo-grid { grid-template-columns: repeat(4, 1fr); } }
 
 /* ── Light mode ── */
-html.light body { background: #f1f5f9; color: #1e293b; }
+html.light body {
+  background: #f1f5f9;
+  color: #1e293b;
+}
 html.light ::-webkit-scrollbar-track { background: #f1f5f9; }
-html.light .glass { background: rgba(255,255,255,0.9); border: 1px solid rgba(51,65,85,0.13); }
+html.light ::-webkit-scrollbar-thumb { background: #6366f1; }
+html.light .glass {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(51,65,85,0.13);
+}
 html.light .nav-link { color: #475569; }
 html.light .nav-link:hover { color: #0f172a; }
-html.light #navbar { background: rgba(241,245,249,0.97) !important; box-shadow: 0 1px 20px rgba(0,0,0,0.08) !important; border-bottom-color: rgba(51,65,85,0.12) !important; }
-html.light #mobile-menu { background: rgba(241,245,249,0.97); border-color: rgba(51,65,85,0.12); }
-html.light .form-input { background: rgba(255,255,255,0.95); border-color: rgba(99,102,241,0.3); color: #1e293b; }
+
+/* ── Light mode Navbar: always solid — JS inline styles are cleared in light mode ── */
+html.light #navbar {
+  background: rgba(241,245,249,0.97) !important;
+  box-shadow: 0 1px 20px rgba(0,0,0,0.08) !important;
+  border-bottom: 1px solid rgba(51,65,85,0.12) !important;
+}
+html.light #mobile-menu {
+  background: rgba(241,245,249,0.97) !important;
+  border-color: rgba(51,65,85,0.12);
+}
+/* Mobile menu link colours in light mode */
+html.light #mobile-menu a { color: #334155 !important; }
+html.light #mobile-menu a:hover { color: #0f172a !important; }
+html.light #mobile-menu .border-t { border-color: rgba(51,65,85,0.12) !important; }
+
+html.light .form-input {
+  background: rgba(255,255,255,0.95);
+  border-color: rgba(99,102,241,0.3);
+  color: #1e293b;
+}
 html.light .form-input::placeholder { color: #94a3b8; }
-html.light .form-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+html.light .form-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
 html.light select option { background: #f1f5f9; color: #1e293b; }
 html.light footer { border-color: rgba(51,65,85,0.12); }
+html.light footer .text-slate-400,
+html.light footer .text-slate-500,
+html.light footer .text-slate-600 { color: #64748b !important; }
+
+/* ── Text colour overrides — scoped to avoid breaking coloured-bg buttons ── */
 html.light .text-white     { color: #0f172a !important; }
 html.light .text-slate-200 { color: #1e293b !important; }
 html.light .text-slate-300 { color: #334155 !important; }
 html.light .text-slate-400 { color: #475569 !important; }
 html.light .text-slate-500 { color: #64748b !important; }
 html.light .text-slate-600 { color: #475569 !important; }
-html.light .border-white\/5  { border-color: rgba(51,65,85,0.1) !important; }
+
+/* ── Restore WHITE text on all coloured-background buttons/links ── */
+html.light .bg-indigo-600,
+html.light .bg-indigo-500,
+html.light a.bg-indigo-600,
+html.light button.bg-indigo-600 { color: #ffffff !important; }
+html.light .bg-indigo-600 *,
+html.light .bg-indigo-500 * { color: #ffffff !important; }
+/* gradient CTA buttons (booking submit, etc.) */
+html.light [class*="from-indigo"][class*="to-purple"],
+html.light [class*="from-indigo"][class*="to-purple"] * { color: #ffffff !important; }
+/* demo buttons */
+html.light .demo-btn { color: #ffffff !important; }
+/* scroll-top fab */
+html.light #scroll-top { color: #ffffff !important; }
+
+html.light .border-white\/5  { border-color: rgba(51,65,85,0.10) !important; }
 html.light .border-white\/10 { border-color: rgba(51,65,85,0.15) !important; }
 html.light .bg-\[\#0f172a\]\/95 { background: rgba(241,245,249,0.97) !important; }
-html.light #theme-toggle, html.light #theme-toggle-mobile { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.3); }
-html.light .demo-card { background: rgba(255,255,255,0.92); border-color: rgba(99,102,241,0.2); }
+html.light #theme-toggle,
+html.light #theme-toggle-mobile {
+  background: rgba(99,102,241,0.1);
+  border-color: rgba(99,102,241,0.3);
+  color: #0f172a !important;
+}
+html.light .demo-card {
+  background: rgba(255,255,255,0.92);
+  border-color: rgba(99,102,241,0.2);
+}
 html.light .demo-card:hover { border-color: rgba(99,102,241,0.5); }
+html.light .demo-card .text-white { color: #0f172a !important; }
+html.light .demo-card h3 { color: #0f172a !important; }
+
+/* ── Section / card heading text in light mode ── */
+html.light section h2,
+html.light section h3,
+html.light .glass h3,
+html.light .glass h4 { color: #0f172a !important; }
+
+/* ── Badge text in light mode ── */
+html.light .badge.bg-indigo-500\/10 { background: rgba(99,102,241,0.12) !important; }
+html.light .badge.bg-cyan-500\/10   { background: rgba(6,182,212,0.12) !important; }
+html.light .badge.bg-green-500\/10  { background: rgba(34,197,94,0.12) !important; }
+html.light .badge.bg-blue-500\/10   { background: rgba(59,130,246,0.12) !important; }
+html.light .badge.bg-purple-500\/10 { background: rgba(168,85,247,0.12) !important; }
+
+/* ── Digital Hub comparison boxes in light mode ── */
+html.light .border-red-500\/15 { background: rgba(254,242,242,0.8) !important; }
+html.light .border-indigo-500\/25 { background: rgba(238,242,255,0.8) !important; }
 
 /* =======================================================
    MOBILE PERFORMANCE MODE (<=767px)
@@ -269,6 +346,16 @@ html.light .demo-card:hover { border-color: rgba(99,102,241,0.5); }
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     background: rgba(11,17,32,0.94) !important;
+  }
+
+  /* 2a. Light-mode glass on mobile — must come AFTER the dark override above */
+  html.light .glass {
+    background: rgba(248,250,252,0.97) !important;
+    border-color: rgba(51,65,85,0.14) !important;
+  }
+  html.light #mobile-menu {
+    background: rgba(241,245,249,0.98) !important;
+    border-color: rgba(51,65,85,0.12) !important;
   }
 
   /* 3. Kill ALL animations and transitions site-wide */
@@ -307,10 +394,40 @@ html.light .demo-card:hover { border-color: rgba(99,102,241,0.5); }
   /* 10. Mobile menu: instant open, no slide animation */
   #mobile-menu { transition: none !important; }
   #mobile-menu.open { max-height: none; }
+
+  /* 11. Safe-area padding for iPhone notch / Dynamic Island */
+  #navbar > div:first-child {
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+  }
+
+  /* 12. Improve touch tap areas on mobile menu links */
+  #mobile-menu a { min-height: 48px; display: flex; align-items: center; }
 }
 
 /* ── Reduced motion preference ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; }
   .reveal { opacity: 1 !important; transform: none !important; }
+}
+
+/* ── Extra-small screens (<375px) ── */
+@media (max-width: 374px) {
+  html { font-size: 15px; }
+  .price-tag { font-size: 2rem; }
+}
+
+/* ── Tablet (768px–1023px) improvements ── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .demo-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Desktop focus: fluid large-screen padding ── */
+@media (min-width: 1280px) {
+  .max-w-7xl { padding-left: 2rem; padding-right: 2rem; }
+}
+
+/* ── Navbar safe-area (notch / Dynamic Island) ── */
+#navbar {
+  padding-top: env(safe-area-inset-top, 0px);
 }

@@ -2,7 +2,18 @@
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <!-- ⚡ Theme init — runs BEFORE any CSS or body renders to prevent flash -->
+  <script>
+    (function(){
+      try{
+        if(localStorage.getItem('swiftstatic-theme')==='light'){
+          document.documentElement.classList.add('light');
+        }
+      }catch(e){}
+    })();
+  </script>
 
   <!-- ── Primary SEO ── -->
   <title>SwiftStatic – Professional Web Design India | Fast, Affordable Websites</title>
@@ -11,7 +22,8 @@
   <meta name="author" content="SwiftStatic Web Services" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://swiftstatic.vercel.app/" />
-  <meta name="theme-color" content="#0b1120" />
+  <meta name="theme-color" content="#0b1120" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f1f5f9" media="(prefers-color-scheme: light)" />
 
   <!-- ── Open Graph (Facebook / WhatsApp / LinkedIn) ── -->
   <meta property="og:type" content="website" />
@@ -64,9 +76,12 @@
   <!-- Critical inline CSS: instant above-fold paint before any external file loads -->
   <style>
     *,*::before,*::after{box-sizing:border-box}
-    html{background:#0b1120;color-scheme:dark;scroll-behavior:smooth;scroll-padding-top:72px}
+    html{background:#0b1120;color-scheme:dark;scroll-behavior:smooth;scroll-padding-top:80px}
+    html.light{background:#f1f5f9;color-scheme:light}
     body{background:#0b1120;margin:0;color:#f1f5f9;font-family:Inter,system-ui,-apple-system,sans-serif;overflow-x:hidden}
-    #navbar{position:fixed;top:0;left:0;right:0;z-index:50;background:transparent}
+    html.light body{background:#f1f5f9;color:#1e293b}
+    #navbar{position:fixed;top:0;left:0;right:0;z-index:50;background:transparent;padding-top:env(safe-area-inset-top,0px)}
+    html.light #navbar{background:rgba(241,245,249,0.97);box-shadow:0 1px 20px rgba(0,0,0,0.08)}
     .hidden{display:none!important}
     #home{min-height:100svh;display:flex;align-items:center;justify-content:center;position:relative}
     #mobile-menu{max-height:0;overflow:hidden}
@@ -103,7 +118,7 @@
 ===================================================================== -->
 <header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
   <div class="max-w-7xl mx-auto px-5 lg:px-8">
-    <div class="flex items-center justify-between h-16 lg:h-18">
+    <div class="flex items-center justify-between h-16 lg:h-20">
 
       <!-- Logo -->
       <a href="#home" class="flex items-center">
@@ -111,7 +126,7 @@
       </a>
 
       <!-- Desktop Nav -->
-      <nav class="hidden md:flex items-center gap-8">
+      <nav class="hidden md:flex items-center gap-8" aria-label="Main navigation">
         <a href="#services" class="nav-link">Services</a>
         <a href="#plans" class="nav-link">Plans</a>
         <a href="#demos" class="nav-link">Demos</a>
@@ -132,7 +147,7 @@
       </div>
 
       <!-- Hamburger -->
-      <button id="menu-toggle" class="md:hidden text-slate-300 hover:text-white p-2" aria-label="Menu">
+      <button id="menu-toggle" class="md:hidden text-slate-300 hover:text-white p-2" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
         <div class="w-5 h-0.5 bg-current mb-1 transition-all duration-300" id="bar1"></div>
         <div class="w-5 h-0.5 bg-current mb-1 transition-all duration-300" id="bar2"></div>
         <div class="w-4 h-0.5 bg-current transition-all duration-300" id="bar3"></div>
@@ -141,7 +156,7 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div id="mobile-menu" class="md:hidden bg-[#0f172a]/95 backdrop-blur-xl border-t border-white/5">
+  <div id="mobile-menu" class="md:hidden bg-[#0f172a]/95 backdrop-blur-xl border-t border-white/5" aria-hidden="true">
     <div class="px-5 py-4 flex flex-col gap-4">
       <a href="#services"  class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Services</a>
       <a href="#plans"     class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Plans</a>
@@ -157,6 +172,7 @@
   </div>
 </header>
 
+<main id="main-content">
 
 <!-- =====================================================================
      HERO
@@ -665,37 +681,37 @@
 
         <!-- Name -->
         <div class="mb-5">
-          <label class="block text-sm font-semibold text-slate-300 mb-2">Your Name ✨</label>
+          <label for="b-name" class="block text-sm font-semibold text-slate-300 mb-2">Your Name ✨</label>
           <input type="text" id="b-name" class="form-input" placeholder="e.g. Rahul Sharma" required />
         </div>
 
         <!-- Email -->
         <div class="mb-5">
-          <label class="block text-sm font-semibold text-slate-300 mb-2">Email Address 📧</label>
+          <label for="b-email" class="block text-sm font-semibold text-slate-300 mb-2">Email Address 📧</label>
           <input type="email" id="b-email" class="form-input" placeholder="you@example.com" required />
         </div>
 
         <!-- Service -->
         <div class="mb-5">
-          <label class="block text-sm font-semibold text-slate-300 mb-2">Service Interested In 🎯</label>
+          <label for="b-service" class="block text-sm font-semibold text-slate-300 mb-2">Service Interested In 🎯</label>
           <select id="b-service" class="form-input appearance-none cursor-pointer" required>
             <option value="" disabled selected>Select a service...</option>
-            <option>Custom Business Website</option>
-            <option>Static Website for Your Business</option>
-            <option>Restaurant / Cafe Website</option>
-            <option>Free Consultation Only</option>
-            <option>Something Else</option>
+            <option value="Custom Business Website">Custom Business Website</option>
+            <option value="Static Website for Your Business">Static Website for Your Business</option>
+            <option value="Restaurant / Cafe Website">Restaurant / Cafe Website</option>
+            <option value="Free Consultation Only">Free Consultation Only</option>
+            <option value="Something Else">Something Else</option>
           </select>
         </div>
 
         <!-- Date + Time row -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
           <div>
-            <label class="block text-sm font-semibold text-slate-300 mb-2">Preferred Date 📅</label>
+            <label for="b-date" class="block text-sm font-semibold text-slate-300 mb-2">Preferred Date 📅</label>
             <input type="date" id="b-date" class="form-input cursor-pointer" required />
           </div>
           <div>
-            <label class="block text-sm font-semibold text-slate-300 mb-2">Time Slot ⏰</label>
+            <label for="b-time" class="block text-sm font-semibold text-slate-300 mb-2">Time Slot ⏰</label>
             <select id="b-time" class="form-input appearance-none cursor-pointer" required>
               <option value="" disabled selected>Choose time</option>
               <option>10:00 AM – 10:15 AM</option>
@@ -710,7 +726,7 @@
 
         <!-- Message -->
         <div class="mb-7">
-          <label class="block text-sm font-semibold text-slate-300 mb-2">Tell us about your project (optional) 💭</label>
+          <label for="b-msg" class="block text-sm font-semibold text-slate-300 mb-2">Tell us about your project (optional) 💭</label>
           <textarea id="b-msg" class="form-input resize-none" rows="3" placeholder="Brief description of what you need..."></textarea>
         </div>
 
@@ -809,34 +825,34 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
-                <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Name</label>
+                <label for="c-name" class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Name</label>
                 <input type="text" id="c-name" class="form-input" placeholder="Your name" required />
               </div>
               <div>
-                <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Email</label>
+                <label for="c-email" class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Email</label>
                 <input type="email" id="c-email" class="form-input" placeholder="you@email.com" required />
               </div>
             </div>
 
             <div class="mb-4">
-              <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Interested Plan</label>
+              <label for="c-plan" class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Interested Plan</label>
               <select id="c-plan" class="form-input appearance-none cursor-pointer">
                 <option value="" selected>Select a plan (optional)</option>
-                <option>Basic — ₹5,000</option>
-                <option>Growth — ₹8,000</option>
-                <option>Premium — ₹15,000</option>
-                <option>Add-On: The Caretaker — ₹1,500/month</option>
-                <option>Not sure yet</option>
+                <option value="Basic — ₹5,000">Basic — ₹5,000</option>
+                <option value="Growth — ₹8,000">Growth — ₹8,000</option>
+                <option value="Premium — ₹15,000">Premium — ₹15,000</option>
+                <option value="Add-On: The Caretaker — ₹1,500/month">Add-On: The Caretaker — ₹1,500/month</option>
+                <option value="Not sure yet">Not sure yet</option>
               </select>
             </div>
 
             <div class="mb-4">
-              <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Subject</label>
+              <label for="c-subject" class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Subject</label>
               <input type="text" id="c-subject" class="form-input" placeholder="What's this about?" required />
             </div>
 
             <div class="mb-6">
-              <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Message</label>
+              <label for="c-message" class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Message</label>
               <textarea id="c-message" class="form-input resize-none" rows="4" placeholder="Tell us about your project..." required></textarea>
             </div>
 
@@ -883,7 +899,7 @@
       </div>
 
       <!-- Nav links -->
-      <nav class="flex flex-wrap gap-x-8 gap-y-3 justify-center">
+      <nav class="flex flex-wrap gap-x-8 gap-y-3 justify-center" aria-label="Footer navigation">
         <a href="#services"  class="text-slate-400 hover:text-white text-sm font-medium transition-colors">Services</a>
         <a href="#plans"     class="text-slate-400 hover:text-white text-sm font-medium transition-colors">Plans</a>
         <a href="#portfolio" class="text-slate-400 hover:text-white text-sm font-medium transition-colors">Portfolio</a>
@@ -930,5 +946,6 @@
 </script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 
+</main><!-- /#main-content -->
 </body>
 </html>
