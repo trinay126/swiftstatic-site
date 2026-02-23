@@ -33,12 +33,13 @@ if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
 }
 
 /* ── Gzip compression: cuts payload 60-80%, biggest TTFB win ── */
-app.use(compression({ level: 6, threshold: 1024 }));
+app.use(compression({ level: 6, threshold: 512 }));
 
 /* ── Early Hints: preload critical assets on HTML page requests ── */
 app.use((req, res, next) => {
   if (req.method === 'GET' && (req.path === '/' || req.path.endsWith('.html'))) {
     res.setHeader('Link', [
+      '</images/logo-nav.webp>; rel=preload; as=image; type=image/webp',
       '</tw.css>; rel=preload; as=style',
       '</style.css>; rel=preload; as=style',
       '</script.js>; rel=preload; as=script',

@@ -50,9 +50,11 @@ h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; }
 .blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(70px);
+  filter: blur(60px);
   pointer-events: none;
   z-index: 0;
+  contain: strict;
+  will-change: auto;
 }
 
 /* ── Glass card ── */
@@ -61,20 +63,75 @@ h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; }
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(148,163,184,0.08);
+  contain: layout style;
 }
 
 /* ── Hover lift ── */
-.hover-lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.hover-lift {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  will-change: transform;
+  contain: layout style;
+}
 .hover-lift:hover { transform: translateY(-5px); }
+
+/* ── Navbar (always visible) ── */
+#navbar {
+  background: rgba(11,17,32,0.88);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* ── Responsive navbar show/hide (replaces Tailwind md: prefix missing from tw.css) ── */
+
+/* Desktop nav + CTA: hidden on mobile, flex row on desktop */
+.nav-desktop {
+  display: none !important;
+}
+@media (min-width: 768px) {
+  .nav-desktop {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+}
+
+/* Hamburger button: visible on mobile only */
+#menu-toggle,
+.nav-mobile-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  #menu-toggle,
+  .nav-mobile-btn {
+    display: none !important;
+  }
+}
+
+/* Mobile menu panel: hidden on desktop */
+.nav-mobile-menu {
+  display: block;
+}
+@media (min-width: 768px) {
+  .nav-mobile-menu {
+    display: none !important;
+  }
+}
 
 /* ── Nav link ── */
 .nav-link {
   position: relative;
   color: #94a3b8;
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   font-weight: 500;
+  letter-spacing: 0.01em;
   transition: color 0.2s;
-  padding: 6px 2px;
+  padding: 6px 4px;
+  white-space: nowrap;
 }
 .nav-link::after {
   content: '';
@@ -117,9 +174,14 @@ h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; }
 .reveal {
   opacity: 0;
   transform: translateY(18px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  will-change: opacity, transform;
 }
-.reveal.visible { opacity: 1; transform: none; }
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
 
 /* ── Badge pill ── */
 .badge {
@@ -156,12 +218,17 @@ a, button { -webkit-tap-highlight-color: transparent; min-height: 44px; }
 button:active, a:active { opacity: 0.82; }
 :focus-visible { outline: 2px solid #6366f1; outline-offset: 3px; border-radius: 4px; }
 
-/* ── Logo glow (simplified) ── */
+/* ── Logo glow (GPU-promoted, single shadow) ── */
 @keyframes logoGlow {
-  0%,100% { filter: drop-shadow(0 0 5px rgba(0,229,255,0.7)) drop-shadow(0 0 14px rgba(200,0,255,0.4)); }
-  50%      { filter: drop-shadow(0 0 10px rgba(0,229,255,0.9)) drop-shadow(0 0 26px rgba(200,0,255,0.65)); }
+  0%,100% { filter: drop-shadow(0 0 6px rgba(99,102,241,0.5)); }
+  50%      { filter: drop-shadow(0 0 14px rgba(99,102,241,0.7)); }
 }
-.logo-glow { animation: logoGlow 3.5s ease-in-out infinite; border-radius: 14px; }
+.logo-glow {
+  animation: logoGlow 4s ease-in-out infinite;
+  border-radius: 14px;
+  will-change: filter;
+  contain: layout style;
+}
 
 /* ── Hero keyframes ── */
 @keyframes fadeInUp {
@@ -193,6 +260,7 @@ footer { content-visibility: auto; contain-intrinsic-size: 0 280px; }
   display: flex; flex-direction: column; gap: 12px;
   transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
   overflow: hidden;
+  contain: layout style;
 }
 .demo-card:hover { transform: translateY(-5px); border-color: rgba(99,102,241,0.5); box-shadow: 0 8px 28px rgba(99,102,241,0.18); }
 .demo-card-icon {
@@ -243,8 +311,10 @@ html.light .nav-link:hover { color: #0f172a; }
 /* ── Light mode Navbar: always solid — JS inline styles are cleared in light mode ── */
 html.light #navbar {
   background: rgba(241,245,249,0.97) !important;
-  box-shadow: 0 1px 20px rgba(0,0,0,0.08) !important;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.07) !important;
   border-bottom: 1px solid rgba(51,65,85,0.12) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
 }
 html.light #mobile-menu {
   background: rgba(241,245,249,0.97) !important;

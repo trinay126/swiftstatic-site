@@ -27,10 +27,13 @@ function openDemo(url) {
   }
 }
 
-/* â”€â”€ Navbar glass on scroll (throttled with RAF + passive listener) â”€â”€ */
+/* ── Navbar glass on scroll (throttled with RAF + passive listener) ── */
 const navbar       = $('navbar');
 const scrollTopBtn = $('scroll-top');
 let scrollRAF = null;
+
+// Run immediately on load to set correct initial state
+document.addEventListener('DOMContentLoaded', () => onScrollUpdate());
 
 function onScrollUpdate() {
   const sy = window.scrollY;
@@ -38,21 +41,20 @@ function onScrollUpdate() {
   const isLight = document.documentElement.classList.contains('light');
 
   if (isLight) {
-    // In light mode, clear all inline styles — CSS handles the appearance
+    // In light mode, CSS handles everything — clear any inline overrides
     navbar.style.background        = '';
     navbar.style.boxShadow         = '';
-    navbar.style.borderBottomColor = '';
     navbar.style.borderBottom      = '';
+    navbar.style.backdropFilter    = '';
   } else {
+    // Dark mode: start visible, deepen on scroll
     navbar.style.background = scrolled
-      ? 'rgba(11,17,32,0.92)'
-      : 'transparent';
+      ? 'rgba(11,17,32,0.97)'
+      : 'rgba(11,17,32,0.88)';
     navbar.style.boxShadow = scrolled
-      ? '0 4px 40px rgba(0,0,0,0.5), 0 1px 0 rgba(99,102,241,0.15)'
+      ? '0 4px 40px rgba(0,0,0,0.55), 0 1px 0 rgba(99,102,241,0.2)'
       : 'none';
-    navbar.style.borderBottomColor = scrolled
-      ? 'rgba(255,255,255,0.07)'
-      : 'transparent';
+    navbar.style.backdropFilter    = 'blur(16px)';
   }
 
   if (sy > 500) {

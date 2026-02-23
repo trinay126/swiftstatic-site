@@ -71,7 +71,7 @@
   <link rel="dns-prefetch" href="//e-commercedemo-swiftstatic.vercel.app" />
 
   <!-- ── Preload critical above-fold image ── -->
-  <link rel="preload" as="image" href="images/logo.png" fetchpriority="high" />
+  <link rel="preload" as="image" href="images/logo-nav.webp" type="image/webp" fetchpriority="high" />
 
   <!-- Critical inline CSS: instant above-fold paint before any external file loads -->
   <style>
@@ -80,9 +80,11 @@
     html.light{background:#f1f5f9;color-scheme:light}
     body{background:#0b1120;margin:0;color:#f1f5f9;font-family:Inter,system-ui,-apple-system,sans-serif;overflow-x:hidden}
     html.light body{background:#f1f5f9;color:#1e293b}
-    #navbar{position:fixed;top:0;left:0;right:0;z-index:50;background:transparent;padding-top:env(safe-area-inset-top,0px)}
-    html.light #navbar{background:rgba(241,245,249,0.97);box-shadow:0 1px 20px rgba(0,0,0,0.08)}
+    #navbar{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(11,17,32,0.88);border-bottom:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding-top:env(safe-area-inset-top,0px)}
+    html.light #navbar{background:rgba(241,245,249,0.97);border-bottom:1px solid rgba(51,65,85,0.12);box-shadow:0 1px 20px rgba(0,0,0,0.08)}
     .hidden{display:none!important}
+    .nav-desktop{display:none}
+    @media(min-width:768px){.nav-desktop{display:flex!important;flex-direction:row;align-items:center}.nav-mobile-btn,#menu-toggle{display:none!important}}
     #home{min-height:100svh;display:flex;align-items:center;justify-content:center;position:relative}
     #mobile-menu{max-height:0;overflow:hidden}
     .reveal{opacity:0;transform:translateY(18px)}
@@ -118,15 +120,18 @@
 ===================================================================== -->
 <header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
   <div class="max-w-7xl mx-auto px-5 lg:px-8">
-    <div class="flex items-center justify-between h-16 lg:h-20">
+    <div class="flex items-center justify-between h-16 lg:h-18">
 
       <!-- Logo -->
       <a href="#home" class="flex items-center">
-        <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-11 w-auto logo-glow" width="180" height="44" fetchpriority="high" decoding="async" />
+        <picture>
+          <source srcset="images/logo-nav.webp" type="image/webp" />
+          <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-11 w-auto logo-glow" width="112" height="44" fetchpriority="high" decoding="async" />
+        </picture>
       </a>
 
       <!-- Desktop Nav -->
-      <nav class="hidden md:flex items-center gap-8" aria-label="Main navigation">
+      <nav class="nav-desktop items-center gap-6" aria-label="Main navigation">
         <a href="#services" class="nav-link">Services</a>
         <a href="#plans" class="nav-link">Plans</a>
         <a href="#demos" class="nav-link">Demos</a>
@@ -136,7 +141,7 @@
       </nav>
 
       <!-- CTA -->
-      <div class="hidden md:flex items-center gap-3">
+      <div class="nav-desktop items-center gap-3">
         <button id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark mode"
            class="w-9 h-9 rounded-full glass border border-white/10 hover:border-indigo-500/40 flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300 hover:-translate-y-0.5">
           <span id="theme-icon">🌙</span>
@@ -146,8 +151,8 @@
         </a>
       </div>
 
-      <!-- Hamburger -->
-      <button id="menu-toggle" class="md:hidden text-slate-300 hover:text-white p-2" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
+      <!-- Hamburger (mobile only) -->
+      <button id="menu-toggle" class="nav-mobile-btn md:hidden text-slate-300 hover:text-white p-2" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
         <div class="w-5 h-0.5 bg-current mb-1 transition-all duration-300" id="bar1"></div>
         <div class="w-5 h-0.5 bg-current mb-1 transition-all duration-300" id="bar2"></div>
         <div class="w-4 h-0.5 bg-current transition-all duration-300" id="bar3"></div>
@@ -156,7 +161,7 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div id="mobile-menu" class="md:hidden bg-[#0f172a]/95 backdrop-blur-xl border-t border-white/5" aria-hidden="true">
+  <div id="mobile-menu" class="nav-mobile-menu bg-[#0f172a]/95 backdrop-blur-xl border-t border-white/5" aria-hidden="true">
     <div class="px-5 py-4 flex flex-col gap-4">
       <a href="#services"  class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Services</a>
       <a href="#plans"     class="text-slate-300 hover:text-white font-medium py-1 transition-colors" onclick="closeMobileMenu()">Plans</a>
@@ -630,14 +635,14 @@
             <span class="badge bg-orange-500/15 border border-orange-500/30 text-orange-300 text-[10px]">ADD-ON</span>
             <div class="flex items-end gap-1">
               <span class="text-slate-400 text-sm font-semibold">₹</span>
-              <span class="text-2xl font-black font-grotesk text-orange-300">1,500</span>
+              <span class="text-2xl font-black font-grotesk text-orange-300">3,000</span>
               <span class="text-slate-500 text-sm">/&nbsp;month</span>
             </div>
           </div>
           <p class="text-slate-300 font-semibold mb-1">The Caretaker</p>
           <p class="text-slate-400 text-sm leading-relaxed max-w-2xl">Never worry about updating your menu again. We handle all menu changes, new item additions, price updates, and photo replacements on an ongoing basis — so you can focus on running your restaurant.</p>
         </div>
-        <button onclick="selectPlan('Add-On: The Caretaker — ₹1,500/month')" class="w-full md:w-auto flex-shrink-0 flex items-center justify-center gap-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 font-bold py-3 px-7 rounded-xl border border-orange-500/30 transition-all duration-300 hover:-translate-y-0.5 text-sm">
+        <button onclick="selectPlan('Add-On: The Caretaker — ₹3000/month')" class="w-full md:w-auto flex-shrink-0 flex items-center justify-center gap-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 font-bold py-3 px-7 rounded-xl border border-orange-500/30 transition-all duration-300 hover:-translate-y-0.5 text-sm">
           Get Started →
         </button>
       </div>
@@ -841,7 +846,7 @@
                 <option value="Basic — ₹5,000">Basic — ₹5,000</option>
                 <option value="Growth — ₹8,000">Growth — ₹8,000</option>
                 <option value="Premium — ₹15,000">Premium — ₹15,000</option>
-                <option value="Add-On: The Caretaker — ₹1,500/month">Add-On: The Caretaker — ₹1,500/month</option>
+                <option value="Add-On: The Caretaker — ₹3,000/month">Add-On: The Caretaker — ₹3,000/month</option>
                 <option value="Not sure yet">Not sure yet</option>
               </select>
             </div>
@@ -892,7 +897,10 @@
       <!-- Brand -->
       <div class="text-center lg:text-left">
         <div class="flex items-center justify-center lg:justify-start mb-3">
-          <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-16 md:h-[72px] w-auto logo-glow" width="180" height="64" loading="lazy" decoding="async" />
+          <picture>
+            <source srcset="images/logo-footer.webp" type="image/webp" />
+            <img src="images/logo.png" alt="SwiftStatic Web Services" class="h-16 md:h-[72px] w-auto logo-glow" width="180" height="64" loading="lazy" decoding="async" />
+          </picture>
         </div>
         <p class="text-slate-500 text-sm max-w-xs">Building your dream website, fast and affordable. 🚀</p>
         <p class="text-slate-600 text-xs mt-1">© 2026 SwiftStatic Web Services. All rights reserved.</p>
